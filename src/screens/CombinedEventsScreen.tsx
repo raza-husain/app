@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { StyleSheet, ScrollView, View, Text, TouchableOpacity, Modal, TextInput, Platform, KeyboardAvoidingView } from 'react-native';
+import { StyleSheet, ScrollView, View, Text, TouchableOpacity, TextInput, Platform, KeyboardAvoidingView } from 'react-native';
 import { upcomingEvents } from '../data/events';
 import { monthlyCommerations, annualEvents } from '../data/ursEvents';
 import { Header, SectionHeader, TabNavigation } from '../components/Navigation';
@@ -14,7 +14,7 @@ interface CombinedEventsProps {
 export const CombinedEventsScreen: React.FC<CombinedEventsProps> = ({ onNavigate }) => {
   const [activeTab, setActiveTab] = useState(0);
   const tabs = ['Upcoming Events', 'Calendar'];
-  const [isAdminModalVisible, setAdminModalVisible] = useState(false);
+  const [isAdminFormOpen, setAdminFormOpen] = useState(false);
 
   // local copies to show admin additions immediately
   const [upcomingList, setUpcomingList] = useState(upcomingEvents);
@@ -30,7 +30,7 @@ export const CombinedEventsScreen: React.FC<CombinedEventsProps> = ({ onNavigate
       <TabNavigation tabs={tabs} activeTab={activeTab} onTabChange={setActiveTab} />
 
       {/* Admin add button */}
-      <TouchableOpacity style={styles.addButton} onPress={() => setAdminModalVisible(true)}>
+      <TouchableOpacity style={styles.addButton} onPress={() => setAdminFormOpen(true)}>
         <Text style={styles.addButtonText}>＋</Text>
       </TouchableOpacity>
 
@@ -84,60 +84,66 @@ export const CombinedEventsScreen: React.FC<CombinedEventsProps> = ({ onNavigate
         <Text style={styles.backButtonText}>← Back to Home</Text>
       </TouchableOpacity>
 
-      {/* Admin Modal */}
-      <Modal visible={isAdminModalVisible} transparent animationType="slide" onRequestClose={() => setAdminModalVisible(false)}>
-        <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : undefined} style={styles.modalWrap}>
-          <View style={styles.modalContent}>
-            <Text style={styles.modalTitle}>Add New {activeTab === 0 ? 'Event' : 'Calendar Entry'}</Text>
-
-            {activeTab === 0 ? (
-              <>
-                <TextInput placeholder="Name" value={form.name} onChangeText={(t) => setForm({...form, name: t})} style={styles.input} />
-                <TextInput placeholder="Date" value={form.date} onChangeText={(t) => setForm({...form, date: t})} style={styles.input} />
-                <TextInput placeholder="Time" value={form.time} onChangeText={(t) => setForm({...form, time: t})} style={styles.input} />
-                <TextInput placeholder="Description" value={form.description} onChangeText={(t) => setForm({...form, description: t})} style={[styles.input, styles.inputMultiline]} multiline numberOfLines={3} />
-                <TextInput placeholder="Significance" value={form.significance} onChangeText={(t) => setForm({...form, significance: t})} style={styles.input} />
-                <View style={styles.modalButtons}>
-                  <TouchableOpacity style={styles.modalButton} onPress={() => {
-                    const newItem = { id: Date.now().toString(), name: form.name || 'Untitled', date: form.date || '', time: form.time || '', description: form.description || '', significance: form.significance || '' };
-                    setUpcomingList([newItem, ...upcomingList]);
-                    setForm({ ...form, name:'', date:'', time:'', description:'', significance:'' });
-                    setAdminModalVisible(false);
-                  }}>
-                    <Text style={styles.modalButtonText}>Add Event</Text>
-                  </TouchableOpacity>
-                  <TouchableOpacity style={[styles.modalButton, styles.modalCancel]} onPress={() => setAdminModalVisible(false)}>
-                    <Text style={[styles.modalButtonText, styles.modalCancelText]}>Cancel</Text>
-                  </TouchableOpacity>
-                </View>
-              </>
-            ) : (
-              <>
-                <TextInput placeholder="Title" value={form.title} onChangeText={(t) => setForm({...form, title: t})} style={styles.input} />
-                <TextInput placeholder="Islamic Date" value={form.islamicDate} onChangeText={(t) => setForm({...form, islamicDate: t})} style={styles.input} />
-                <TextInput placeholder="Gregorian Date" value={form.gregorianDate} onChangeText={(t) => setForm({...form, gregorianDate: t})} style={styles.input} />
-                <TextInput placeholder="Month Day" value={form.monthDay} onChangeText={(t) => setForm({...form, monthDay: t})} style={styles.input} />
-                <TextInput placeholder="Description" value={form.description} onChangeText={(t) => setForm({...form, description: t})} style={[styles.input, styles.inputMultiline]} multiline numberOfLines={3} />
-                <TextInput placeholder="Significance" value={form.significance} onChangeText={(t) => setForm({...form, significance: t})} style={styles.input} />
-                <TextInput placeholder="Icon" value={form.icon} onChangeText={(t) => setForm({...form, icon: t})} style={styles.input} />
-                <View style={styles.modalButtons}>
-                  <TouchableOpacity style={styles.modalButton} onPress={() => {
-                    const newAnnual = { id: Date.now().toString(), title: form.title || 'Untitled', islamicDate: form.islamicDate || '', gregorianDate: form.gregorianDate || '', description: form.description || '', significance: form.significance || '', icon: form.icon || '📅' };
-                    setAnnualList([newAnnual, ...annualList]);
-                    setForm({ ...form, title:'', islamicDate:'', gregorianDate:'', monthDay:'', description:'', significance:'', icon:'' });
-                    setAdminModalVisible(false);
-                  }}>
-                    <Text style={styles.modalButtonText}>Add Calendar Item</Text>
-                  </TouchableOpacity>
-                  <TouchableOpacity style={[styles.modalButton, styles.modalCancel]} onPress={() => setAdminModalVisible(false)}>
-                    <Text style={[styles.modalButtonText, styles.modalCancelText]}>Cancel</Text>
-                  </TouchableOpacity>
-                </View>
-              </>
-            )}
+      {/* Admin Form Page (full screen) */}
+      {isAdminFormOpen && (
+        <View style={styles.formPage}>
+          <View style={styles.formHeader}>
+            <TouchableOpacity onPress={() => setAdminFormOpen(false)} style={styles.formBack}>
+              <Text style={{fontSize:18}}>←</Text>
+            </TouchableOpacity>
+            <Text style={styles.formHeaderTitle}>Add New {activeTab === 0 ? 'Event' : 'Calendar Entry'}</Text>
           </View>
-        </KeyboardAvoidingView>
-      </Modal>
+          <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : undefined} style={{flex:1}}>
+            <ScrollView contentContainerStyle={{padding:12}}>
+              {activeTab === 0 ? (
+                <>
+                  <TextInput placeholder="Name" value={form.name} onChangeText={(t) => setForm({...form, name: t})} style={styles.input} />
+                  <TextInput placeholder="Date" value={form.date} onChangeText={(t) => setForm({...form, date: t})} style={styles.input} />
+                  <TextInput placeholder="Time" value={form.time} onChangeText={(t) => setForm({...form, time: t})} style={styles.input} />
+                  <TextInput placeholder="Description" value={form.description} onChangeText={(t) => setForm({...form, description: t})} style={[styles.input, styles.inputMultiline]} multiline numberOfLines={3} />
+                  <TextInput placeholder="Significance" value={form.significance} onChangeText={(t) => setForm({...form, significance: t})} style={styles.input} />
+                  <View style={styles.modalButtons}>
+                    <TouchableOpacity style={styles.modalButton} onPress={() => {
+                      const newItem = { id: Date.now().toString(), name: form.name || 'Untitled', date: form.date || '', time: form.time || '', description: form.description || '', significance: form.significance || '' };
+                      setUpcomingList([newItem, ...upcomingList]);
+                      setForm({ ...form, name:'', date:'', time:'', description:'', significance:'' });
+                      setAdminFormOpen(false);
+                    }}>
+                      <Text style={styles.modalButtonText}>Add Event</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity style={[styles.modalButton, styles.modalCancel]} onPress={() => setAdminFormOpen(false)}>
+                      <Text style={[styles.modalButtonText, styles.modalCancelText]}>Cancel</Text>
+                    </TouchableOpacity>
+                  </View>
+                </>
+              ) : (
+                <>
+                  <TextInput placeholder="Title" value={form.title} onChangeText={(t) => setForm({...form, title: t})} style={styles.input} />
+                  <TextInput placeholder="Islamic Date" value={form.islamicDate} onChangeText={(t) => setForm({...form, islamicDate: t})} style={styles.input} />
+                  <TextInput placeholder="Gregorian Date" value={form.gregorianDate} onChangeText={(t) => setForm({...form, gregorianDate: t})} style={styles.input} />
+                  <TextInput placeholder="Month Day" value={form.monthDay} onChangeText={(t) => setForm({...form, monthDay: t})} style={styles.input} />
+                  <TextInput placeholder="Description" value={form.description} onChangeText={(t) => setForm({...form, description: t})} style={[styles.input, styles.inputMultiline]} multiline numberOfLines={3} />
+                  <TextInput placeholder="Significance" value={form.significance} onChangeText={(t) => setForm({...form, significance: t})} style={styles.input} />
+                  <TextInput placeholder="Icon" value={form.icon} onChangeText={(t) => setForm({...form, icon: t})} style={styles.input} />
+                  <View style={styles.modalButtons}>
+                    <TouchableOpacity style={styles.modalButton} onPress={() => {
+                      const newAnnual = { id: Date.now().toString(), title: form.title || 'Untitled', islamicDate: form.islamicDate || '', gregorianDate: form.gregorianDate || '', description: form.description || '', significance: form.significance || '', icon: form.icon || '📅' };
+                      setAnnualList([newAnnual, ...annualList]);
+                      setForm({ ...form, title:'', islamicDate:'', gregorianDate:'', monthDay:'', description:'', significance:'', icon:'' });
+                      setAdminFormOpen(false);
+                    }}>
+                      <Text style={styles.modalButtonText}>Add Calendar Item</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity style={[styles.modalButton, styles.modalCancel]} onPress={() => setAdminFormOpen(false)}>
+                      <Text style={[styles.modalButtonText, styles.modalCancelText]}>Cancel</Text>
+                    </TouchableOpacity>
+                  </View>
+                </>
+              )}
+            </ScrollView>
+          </KeyboardAvoidingView>
+        </View>
+      )}
     </View>
   );
 };
@@ -179,6 +185,10 @@ const styles = StyleSheet.create({
   modalButtonText: { color: '#fff', fontWeight: '700' },
   modalCancel: { backgroundColor: '#eee' },
   modalCancelText: { color: '#1b4d3e' },
+  formPage: { position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, backgroundColor: '#fff', zIndex: 20 },
+  formHeader: { height: 56, flexDirection: 'row', alignItems: 'center', paddingHorizontal: 12, borderBottomWidth: 1, borderBottomColor: '#eee' },
+  formBack: { padding: 8, marginRight: 8 },
+  formHeaderTitle: { fontSize: 16, fontWeight: '700', color: '#1b4d3e' },
 });
 
 export default CombinedEventsScreen;

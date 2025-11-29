@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { StyleSheet, ScrollView, View, Text, TouchableOpacity, Modal, TextInput, Platform, KeyboardAvoidingView } from 'react-native';
+import { StyleSheet, ScrollView, View, Text, TouchableOpacity, TextInput, Platform, KeyboardAvoidingView } from 'react-native';
 import { ursUpdates, ursHistory } from '../data/ursEvents';
 import { Header, SectionHeader, TabNavigation } from '../components/Navigation';
 
@@ -38,7 +38,7 @@ const HistoryCard: React.FC<any> = ({ year, date, title, summary, highlights, at
 export const CombinedUrsScreen: React.FC<CombinedUrsProps> = ({ onNavigate }) => {
   const [activeTab, setActiveTab] = useState(0);
   const tabs = ['Updates', 'History'];
-  const [isAdminModalVisible, setAdminModalVisible] = useState(false);
+  const [isAdminFormOpen, setAdminFormOpen] = useState(false);
 
   // keep local copies so admin additions appear immediately without mutating imports
   const [ursUpdatesList, setUrsUpdatesList] = useState(ursUpdates);
@@ -56,7 +56,7 @@ export const CombinedUrsScreen: React.FC<CombinedUrsProps> = ({ onNavigate }) =>
       <TabNavigation tabs={tabs} activeTab={activeTab} onTabChange={setActiveTab} />
 
       {/* Admin add button */}
-      <TouchableOpacity style={styles.addButton} onPress={() => setAdminModalVisible(true)}>
+      <TouchableOpacity style={styles.addButton} onPress={() => setAdminFormOpen(true)}>
         <Text style={styles.addButtonText}>＋</Text>
       </TouchableOpacity>
 
@@ -84,59 +84,65 @@ export const CombinedUrsScreen: React.FC<CombinedUrsProps> = ({ onNavigate }) =>
         <Text style={styles.backButtonText}>← Back to Home</Text>
       </TouchableOpacity>
 
-      {/* Admin Modal */}
-      <Modal visible={isAdminModalVisible} transparent animationType="slide" onRequestClose={() => setAdminModalVisible(false)}>
-        <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : undefined} style={styles.modalWrap}>
-          <View style={styles.modalContent}>
-            <Text style={styles.modalTitle}>Add New {activeTab === 0 ? 'Update' : 'History'}</Text>
-
-            {activeTab === 0 ? (
-              <>
-                <TextInput placeholder="Title" value={form.updTitle} onChangeText={(t) => setForm({...form, updTitle: t})} style={styles.input} />
-                <TextInput placeholder="Date" value={form.updDate} onChangeText={(t) => setForm({...form, updDate: t})} style={styles.input} />
-                <TextInput placeholder="Time" value={form.updTime} onChangeText={(t) => setForm({...form, updTime: t})} style={styles.input} />
-                <TextInput placeholder="Category" value={form.updCategory} onChangeText={(t) => setForm({...form, updCategory: t})} style={styles.input} />
-                <TextInput placeholder="Description" value={form.updDescription} onChangeText={(t) => setForm({...form, updDescription: t})} style={[styles.input, styles.inputMultiline]} multiline numberOfLines={3} />
-                <View style={styles.modalButtons}>
-                  <TouchableOpacity style={styles.modalButton} onPress={() => {
-                    const newItem = { id: Date.now().toString(), title: form.updTitle || 'Untitled', date: form.updDate || '', time: form.updTime || '', description: form.updDescription || '', category: form.updCategory || '' };
-                    setUrsUpdatesList([newItem, ...ursUpdatesList]);
-                    setForm({ ...form, updTitle:'', updDate:'', updTime:'', updDescription:'', updCategory:'' });
-                    setAdminModalVisible(false);
-                  }}>
-                    <Text style={styles.modalButtonText}>Add Update</Text>
-                  </TouchableOpacity>
-                  <TouchableOpacity style={[styles.modalButton, styles.modalCancel]} onPress={() => setAdminModalVisible(false)}>
-                    <Text style={[styles.modalButtonText, styles.modalCancelText]}>Cancel</Text>
-                  </TouchableOpacity>
-                </View>
-              </>
-            ) : (
-              <>
-                <TextInput placeholder="Year" value={form.histYear} onChangeText={(t) => setForm({...form, histYear: t})} style={styles.input} />
-                <TextInput placeholder="Date" value={form.histDate} onChangeText={(t) => setForm({...form, histDate: t})} style={styles.input} />
-                <TextInput placeholder="Title" value={form.histTitle} onChangeText={(t) => setForm({...form, histTitle: t})} style={styles.input} />
-                <TextInput placeholder="Summary" value={form.histSummary} onChangeText={(t) => setForm({...form, histSummary: t})} style={[styles.input, styles.inputMultiline]} multiline numberOfLines={3} />
-                <TextInput placeholder="Highlights" value={form.histHighlights} onChangeText={(t) => setForm({...form, histHighlights: t})} style={styles.input} />
-                <TextInput placeholder="Attendance" value={form.histAttendance} onChangeText={(t) => setForm({...form, histAttendance: t})} style={styles.input} />
-                <View style={styles.modalButtons}>
-                  <TouchableOpacity style={styles.modalButton} onPress={() => {
-                    const newItem = { id: Date.now().toString(), year: form.histYear || '', date: form.histDate || '', title: form.histTitle || '', summary: form.histSummary || '', highlights: form.histHighlights || '', attendance: form.histAttendance || '' };
-                    setUrsHistoryList([newItem, ...ursHistoryList]);
-                    setForm({ ...form, histYear:'', histDate:'', histTitle:'', histSummary:'', histHighlights:'', histAttendance:'' });
-                    setAdminModalVisible(false);
-                  }}>
-                    <Text style={styles.modalButtonText}>Add History</Text>
-                  </TouchableOpacity>
-                  <TouchableOpacity style={[styles.modalButton, styles.modalCancel]} onPress={() => setAdminModalVisible(false)}>
-                    <Text style={[styles.modalButtonText, styles.modalCancelText]}>Cancel</Text>
-                  </TouchableOpacity>
-                </View>
-              </>
-            )}
+      {/* Admin Form Page (full screen) */}
+      {isAdminFormOpen && (
+        <View style={styles.formPage}>
+          <View style={styles.formHeader}>
+            <TouchableOpacity onPress={() => setAdminFormOpen(false)} style={styles.formBack}>
+              <Text style={{fontSize:18}}>←</Text>
+            </TouchableOpacity>
+            <Text style={styles.formHeaderTitle}>Add New {activeTab === 0 ? 'Update' : 'History'}</Text>
           </View>
-        </KeyboardAvoidingView>
-      </Modal>
+          <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : undefined} style={{flex:1}}>
+            <ScrollView contentContainerStyle={{padding:12}}>
+              {activeTab === 0 ? (
+                <>
+                  <TextInput placeholder="Title" value={form.updTitle} onChangeText={(t) => setForm({...form, updTitle: t})} style={styles.input} />
+                  <TextInput placeholder="Date" value={form.updDate} onChangeText={(t) => setForm({...form, updDate: t})} style={styles.input} />
+                  <TextInput placeholder="Time" value={form.updTime} onChangeText={(t) => setForm({...form, updTime: t})} style={styles.input} />
+                  <TextInput placeholder="Category" value={form.updCategory} onChangeText={(t) => setForm({...form, updCategory: t})} style={styles.input} />
+                  <TextInput placeholder="Description" value={form.updDescription} onChangeText={(t) => setForm({...form, updDescription: t})} style={[styles.input, styles.inputMultiline]} multiline numberOfLines={3} />
+                  <View style={styles.modalButtons}>
+                    <TouchableOpacity style={styles.modalButton} onPress={() => {
+                      const newItem = { id: Date.now().toString(), title: form.updTitle || 'Untitled', date: form.updDate || '', time: form.updTime || '', description: form.updDescription || '', category: form.updCategory || '' };
+                      setUrsUpdatesList([newItem, ...ursUpdatesList]);
+                      setForm({ ...form, updTitle:'', updDate:'', updTime:'', updDescription:'', updCategory:'' });
+                      setAdminFormOpen(false);
+                    }}>
+                      <Text style={styles.modalButtonText}>Add Update</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity style={[styles.modalButton, styles.modalCancel]} onPress={() => setAdminFormOpen(false)}>
+                      <Text style={[styles.modalButtonText, styles.modalCancelText]}>Cancel</Text>
+                    </TouchableOpacity>
+                  </View>
+                </>
+              ) : (
+                <>
+                  <TextInput placeholder="Year" value={form.histYear} onChangeText={(t) => setForm({...form, histYear: t})} style={styles.input} />
+                  <TextInput placeholder="Date" value={form.histDate} onChangeText={(t) => setForm({...form, histDate: t})} style={styles.input} />
+                  <TextInput placeholder="Title" value={form.histTitle} onChangeText={(t) => setForm({...form, histTitle: t})} style={styles.input} />
+                  <TextInput placeholder="Summary" value={form.histSummary} onChangeText={(t) => setForm({...form, histSummary: t})} style={[styles.input, styles.inputMultiline]} multiline numberOfLines={3} />
+                  <TextInput placeholder="Highlights" value={form.histHighlights} onChangeText={(t) => setForm({...form, histHighlights: t})} style={styles.input} />
+                  <TextInput placeholder="Attendance" value={form.histAttendance} onChangeText={(t) => setForm({...form, histAttendance: t})} style={styles.input} />
+                  <View style={styles.modalButtons}>
+                    <TouchableOpacity style={styles.modalButton} onPress={() => {
+                      const newItem = { id: Date.now().toString(), year: form.histYear || '', date: form.histDate || '', title: form.histTitle || '', summary: form.histSummary || '', highlights: form.histHighlights || '', attendance: form.histAttendance || '' };
+                      setUrsHistoryList([newItem, ...ursHistoryList]);
+                      setForm({ ...form, histYear:'', histDate:'', histTitle:'', histSummary:'', histHighlights:'', histAttendance:'' });
+                      setAdminFormOpen(false);
+                    }}>
+                      <Text style={styles.modalButtonText}>Add History</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity style={[styles.modalButton, styles.modalCancel]} onPress={() => setAdminFormOpen(false)}>
+                      <Text style={[styles.modalButtonText, styles.modalCancelText]}>Cancel</Text>
+                    </TouchableOpacity>
+                  </View>
+                </>
+              )}
+            </ScrollView>
+          </KeyboardAvoidingView>
+        </View>
+      )}
     </View>
   );
 };
@@ -193,6 +199,10 @@ const styles = StyleSheet.create({
   modalButtonText: { color: '#fff', fontWeight: '700' },
   modalCancel: { backgroundColor: '#eee' },
   modalCancelText: { color: '#1b4d3e' },
+  formPage: { position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, backgroundColor: '#fff', zIndex: 20 },
+  formHeader: { height: 56, flexDirection: 'row', alignItems: 'center', paddingHorizontal: 12, borderBottomWidth: 1, borderBottomColor: '#eee' },
+  formBack: { padding: 8, marginRight: 8 },
+  formHeaderTitle: { fontSize: 16, fontWeight: '700', color: '#1b4d3e' },
 });
 
 export default CombinedUrsScreen;
