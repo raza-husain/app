@@ -18,7 +18,7 @@ export const FacilitiesScreen: React.FC<FacilitiesScreenProps> = ({ onNavigate }
         subtitle="What we provide for visitors"
       />
       
-      <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
+      <ScrollView style={styles.content} contentContainerStyle={{ flexGrow: 1 }} showsVerticalScrollIndicator={false}>
         <SectionHeader title="Available Facilities" icon="🏛️" />
         {facilities.map((facility) => (
           <FacilityCard

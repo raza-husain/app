@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { StyleSheet, ScrollView, View, TouchableOpacity, Text } from 'react-native';
 import { services } from '../data/services';
-import { Header, SectionHeader, TabNavigation } from '../components/Navigation';
+import { Header, SectionHeader } from '../components/Navigation';
 import { ServiceCard } from '../components/Cards';
 
 type Screen = 'home' | 'services' | 'facilities' | 'guide' | 'events' | 'urs' | 'history' | 'calendar';
@@ -11,28 +11,22 @@ interface ServicesScreenProps {
 }
 
 export const ServicesScreen: React.FC<ServicesScreenProps> = ({ onNavigate }) => {
-  const [activeTab, setActiveTab] = useState(0);
-
-  const allServices = services;
-  const availableServices = services.filter(s => s.available);
-  const tabs = ['All Services', 'Available Now'];
-  const displayServices = activeTab === 0 ? allServices : availableServices;
+  // merged view: show all services, but highlight available ones
+  const displayServices = services;
 
   return (
     <View style={styles.container}>
       <Header 
-        title="Services & Facilities"
-        subtitle="Everything you need for a comfortable visit"
+        title="Services"
+        subtitle="“Service to humanity is service to God. Purification of the heart is the highest form of worship.”"
       />
-      <TabNavigation tabs={tabs} activeTab={activeTab} onTabChange={setActiveTab} />
-      
-      <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
-        <SectionHeader title={tabs[activeTab]} icon="🎯" />
+
+      <ScrollView style={styles.content} contentContainerStyle={{ flexGrow: 1 }} showsVerticalScrollIndicator={false}>
         {displayServices.map((service) => (
           <ServiceCard
             key={service.id}
             icon={service.icon}
-            title={`${service.name}${service.timing ? ' ⏰' : ''}`}
+            title={`${service.name}${service.timing ? '' : ''}${service.available ? ' • Available Now' : ''}`}
             description={`${service.description}${service.timing ? `\n\n🕐 ${service.timing}` : ''}`}
           />
         ))}

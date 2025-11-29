@@ -1,14 +1,13 @@
 import React, { useState } from 'react';
 import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, View } from 'react-native';
+import { StyleSheet, View, SafeAreaView, Platform, StatusBar as RNStatusBar } from 'react-native';
 import { HomeScreen } from './src/screens/HomeScreen';
 import { ServicesScreen } from './src/screens/ServicesScreen';
 import { FacilitiesScreen } from './src/screens/FacilitiesScreen';
 import { VisitorGuideScreen } from './src/screens/VisitorGuideScreen';
-import { EventsScreen } from './src/screens/EventsScreen';
-import { UrsUpdatesScreen } from './src/screens/UrsUpdatesScreen';
-import { UrsHistoryScreen } from './src/screens/UrsHistoryScreen';
-import { MajorEventsScreen } from './src/screens/MajorEventsScreen';
+// Replaced by combined screens: Events/Calendar -> CombinedEventsScreen, Urs/History -> CombinedUrsScreen
+import CombinedEventsScreen from './src/screens/CombinedEventsScreen';
+import CombinedUrsScreen from './src/screens/CombinedUrsScreen';
 
 type Screen = 'home' | 'services' | 'facilities' | 'guide' | 'events' | 'urs' | 'history' | 'calendar';
 
@@ -26,23 +25,25 @@ export default function App() {
       case 'guide':
         return <VisitorGuideScreen onNavigate={setCurrentScreen} />;
       case 'events':
-        return <EventsScreen onNavigate={setCurrentScreen} />;
+        return <CombinedEventsScreen onNavigate={setCurrentScreen} />;
       case 'urs':
-        return <UrsUpdatesScreen onNavigate={setCurrentScreen} />;
+        return <CombinedUrsScreen onNavigate={setCurrentScreen} />;
       case 'history':
-        return <UrsHistoryScreen onNavigate={setCurrentScreen} />;
+        return <CombinedUrsScreen onNavigate={setCurrentScreen} />;
       case 'calendar':
-        return <MajorEventsScreen onNavigate={setCurrentScreen} />;
+        return <CombinedEventsScreen onNavigate={setCurrentScreen} />;
       default:
         return <HomeScreen onNavigate={setCurrentScreen} />;
     }
   };
 
+  const androidPadding = Platform.OS === 'android' ? RNStatusBar.currentHeight || 0 : 0;
+
   return (
-    <View style={styles.container}>
+    <SafeAreaView style={[styles.container, { paddingTop: androidPadding }]}> 
       {renderScreen()}
       <StatusBar style="light" />
-    </View>
+    </SafeAreaView>
   );
 }
 

@@ -12,20 +12,16 @@ interface HomeScreenProps {
 
 export const HomeScreen: React.FC<HomeScreenProps> = ({ onNavigate }) => {
   const navItems: { id: Screen; label: string; icon: string }[] = [
-    { id: 'services', label: 'Services', icon: '🎯' },
-    { id: 'facilities', label: 'Facilities', icon: '🏛️' },
-    { id: 'guide', label: 'Visitor Guide', icon: '📖' },
-    { id: 'events', label: 'Events', icon: '🎉' },
-    { id: 'urs', label: 'Urs Updates', icon: '✨' },
-    { id: 'history', label: 'History', icon: '📚' },
-    { id: 'calendar', label: 'Calendar', icon: '📅' },
+    { id: 'services', label: 'Services & Facilities', icon: '🕌' },
+    { id: 'events', label: 'Events & Calendar', icon: '🗓️' },
+    { id: 'urs', label: 'Urs Updates & History', icon: '✨' },
   ];
 
   return (
-    <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
+    <ScrollView style={styles.container} contentContainerStyle={{ flexGrow: 1 }} showsVerticalScrollIndicator={false}>
       <Header 
         title={dargahInfo.name}
-        subtitle="A Sacred Journey"
+        subtitle="A sanctuary of love, remembrance, and spiritual guidance"
       />
 
       <View style={styles.content}>
@@ -36,10 +32,9 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({ onNavigate }) => {
 
         <SectionHeader title="Quick Information" icon="ℹ️" />
         <View style={styles.quickInfo}>
-          <InfoItem label="📍 Location" value={dargahInfo.location} />
-          <InfoItem label="⏰ Timing" value={dargahInfo.timing} />
-          <InfoItem label="📞 Phone" value={dargahInfo.phone} />
-          <InfoItem label="🌐 Website" value={dargahInfo.website || 'Coming Soon'} />
+          <InfoItem label="Location" value={dargahInfo.location} />
+          <InfoItem label="Timing" value={dargahInfo.timing} />
+          <InfoItem label="Phone" value={dargahInfo.phone} />
         </View>
 
         <SectionHeader title="Explore" icon="🗺️" />
@@ -64,7 +59,7 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({ onNavigate }) => {
 
         <View style={styles.footer}>
           <Text style={styles.footerText}>
-            🙏 May your visit be blessed with peace and spiritual enrichment
+             May your visit be blessed with peace and spiritual enrichment
           </Text>
         </View>
       </View>
@@ -163,7 +158,7 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
   footer: {
-    backgroundColor: '#2c3e50',
+    backgroundColor: '#1b4d3e',
     padding: 16,
     marginHorizontal: 16,
     marginVertical: 20,

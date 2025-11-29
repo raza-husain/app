@@ -23,7 +23,7 @@ export const VisitorGuideScreen: React.FC<VisitorGuideScreenProps> = ({ onNaviga
         subtitle="Tips for a respectful visit"
       />
       
-      <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
+      <ScrollView style={styles.content} contentContainerStyle={{ flexGrow: 1 }} showsVerticalScrollIndicator={false}>
         <View style={styles.section}>
           <SectionHeader title="Rules & Guidelines" icon="📋" />
           {rulesGuides.map((guide) => (

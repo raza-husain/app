@@ -5,7 +5,7 @@ export const services: Service[] = [
     id: '1',
     name: 'Weekly Zikr Gatherings',
     description: 'Experience the remembrance of Allah (Zikr) in congregation. A spiritual practice rooted in the Hasni Silsila tradition, providing inner peace and connection with the Divine.',
-    icon: '🧿',
+    icon: '📿',
     available: true,
     timing: 'Scheduled weekly - Contact Khanqah for details'
   },
@@ -29,7 +29,7 @@ export const services: Service[] = [
     id: '4',
     name: 'Youth Programs',
     description: 'Engagement initiatives designed to teach faith, responsibility, and moral values. Nurturing the next generation in Islamic principles and community service.',
-    icon: '👨‍👩‍👧‍👦',
+    icon: '🧕',
     available: true,
     timing: 'Regular schedule - Contact for details'
   },
@@ -37,7 +37,7 @@ export const services: Service[] = [
     id: '5',
     name: 'Spiritual Guidance',
     description: 'Personal guidance from Sajjada Nashin and spiritual mentors. Receive counseling on spiritual development, purification of the heart, and connection with Allah.',
-    icon: '🙏',
+    icon: '🤲',
     available: true,
     timing: 'By appointment'
   },
@@ -45,7 +45,7 @@ export const services: Service[] = [
     id: '6',
     name: 'Charity & Community Welfare',
     description: 'Active participation in community outreach, relief work, and support for the needy. Embodying the principles of khidmat (service) and compassion.',
-    icon: '❤️',
+    icon: '🕊',
     available: true
   },
   {
