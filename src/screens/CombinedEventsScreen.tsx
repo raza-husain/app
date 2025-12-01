@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
-import { StyleSheet, ScrollView, View, Text, TouchableOpacity, TextInput, Platform, KeyboardAvoidingView } from 'react-native';
+import { StyleSheet, ScrollView, View, Text, TouchableOpacity, TextInput, Platform, KeyboardAvoidingView, Modal } from 'react-native';
+import DateTimePicker from '@react-native-community/datetimepicker';
 import { upcomingEvents } from '../data/events';
 import { monthlyCommerations, annualEvents } from '../data/ursEvents';
 import { Header, SectionHeader, TabNavigation } from '../components/Navigation';
 import { EventCard } from '../components/Cards';
-
-type Screen = 'home' | 'services' | 'facilities' | 'guide' | 'events' | 'urs' | 'history' | 'calendar';
+import { Screen } from '../types';
 
 interface CombinedEventsProps {
   onNavigate?: (screen: Screen) => void;
@@ -22,6 +22,32 @@ export const CombinedEventsScreen: React.FC<CombinedEventsProps> = ({ onNavigate
   const [monthlyList, setMonthlyList] = useState(monthlyCommerations);
 
   const [form, setForm] = useState<any>({ name:'', date:'', time:'', description:'', significance:'', title:'', islamicDate:'', gregorianDate:'', monthDay:'', icon:'' });
+  const [showDatePicker, setShowDatePicker] = useState(false);
+  const [showTimePicker, setShowTimePicker] = useState(false);
+  const [selectedDate, setSelectedDate] = useState(new Date());
+  const [selectedTime, setSelectedTime] = useState(new Date());
+
+  const handleDateChange = (event: any, selectedDate?: Date) => {
+    if (selectedDate) {
+      setSelectedDate(selectedDate);
+      const formatted = selectedDate.toLocaleDateString('en-US', { year: 'numeric', month: '2-digit', day: '2-digit' });
+      setForm({ ...form, date: formatted });
+    }
+    if (Platform.OS === 'android') {
+      setShowDatePicker(false);
+    }
+  };
+
+  const handleTimeChange = (event: any, selectedTime?: Date) => {
+    if (selectedTime) {
+      setSelectedTime(selectedTime);
+      const formatted = selectedTime.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: true });
+      setForm({ ...form, time: formatted });
+    }
+    if (Platform.OS === 'android') {
+      setShowTimePicker(false);
+    }
+  };
 
   return (
     <View style={styles.container}>
@@ -98,8 +124,12 @@ export const CombinedEventsScreen: React.FC<CombinedEventsProps> = ({ onNavigate
               {activeTab === 0 ? (
                 <>
                   <TextInput placeholder="Name" value={form.name} onChangeText={(t) => setForm({...form, name: t})} style={styles.input} />
-                  <TextInput placeholder="Date" value={form.date} onChangeText={(t) => setForm({...form, date: t})} style={styles.input} />
-                  <TextInput placeholder="Time" value={form.time} onChangeText={(t) => setForm({...form, time: t})} style={styles.input} />
+                  <TouchableOpacity style={styles.pickerButton} onPress={() => setShowDatePicker(true)}>
+                    <Text style={styles.pickerButtonText}>📅 {form.date || 'Select Date'}</Text>
+                  </TouchableOpacity>
+                  <TouchableOpacity style={styles.pickerButton} onPress={() => setShowTimePicker(true)}>
+                    <Text style={styles.pickerButtonText}>🕐 {form.time || 'Select Time'}</Text>
+                  </TouchableOpacity>
                   <TextInput placeholder="Description" value={form.description} onChangeText={(t) => setForm({...form, description: t})} style={[styles.input, styles.inputMultiline]} multiline numberOfLines={3} />
                   <TextInput placeholder="Significance" value={form.significance} onChangeText={(t) => setForm({...form, significance: t})} style={styles.input} />
                   <View style={styles.modalButtons}>
@@ -142,6 +172,34 @@ export const CombinedEventsScreen: React.FC<CombinedEventsProps> = ({ onNavigate
               )}
             </ScrollView>
           </KeyboardAvoidingView>
+
+          {/* Date Picker */}
+          {showDatePicker && (
+            <DateTimePicker
+              value={selectedDate}
+              mode="date"
+              display={Platform.OS === 'ios' ? 'spinner' : 'default'}
+              onChange={handleDateChange}
+              textColor="#1b4d3e"
+              accentColor="#1b4d3e"
+              themeVariant="light"
+              style={[styles.datePicker]}
+            />
+          )}
+
+          {/* Time Picker */}
+          {showTimePicker && (
+            <DateTimePicker
+              value={selectedTime}
+              mode="time"
+              display="spinner"
+              onChange={handleTimeChange}
+              textColor="#1b4d3e"
+              accentColor="#1b4d3e"
+              themeVariant="light"
+              is24Hour={false}
+            />
+          )}
         </View>
       )}
     </View>
@@ -189,6 +247,22 @@ const styles = StyleSheet.create({
   formHeader: { height: 56, flexDirection: 'row', alignItems: 'center', paddingHorizontal: 12, borderBottomWidth: 1, borderBottomColor: '#eee' },
   formBack: { padding: 8, marginRight: 8 },
   formHeaderTitle: { fontSize: 16, fontWeight: '700', color: '#1b4d3e' },
+  pickerButton: {
+    borderWidth: 1,
+    borderColor: '#d4af37',
+    padding: 12,
+    borderRadius: 8,
+    marginBottom: 8,
+    backgroundColor: '#f9f9f9',
+  },
+  pickerButtonText: {
+    fontSize: 14,
+    color: '#1b4d3e',
+    fontWeight: '600',
+  },
+  datePicker: {
+    backgroundColor: '#fff',
+  },
 });
 
 export default CombinedEventsScreen;

@@ -10,8 +10,10 @@ interface CardProps {
 export const ServiceCard: React.FC<CardProps> = ({ title, icon, description }) => {
   return (
     <View style={styles.card}>
-      <Text style={styles.icon}>{icon}</Text>
-      <Text style={styles.title}>{title}</Text>
+      <View style={styles.headerRow}>
+        <Text style={styles.icon}>{icon}</Text>
+        <Text style={styles.title}>{title}</Text>
+      </View>
       <Text style={styles.description}>{description}</Text>
     </View>
   );
@@ -121,15 +123,20 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.1,
     shadowRadius: 4,
   },
+  headerRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 8,
+  },
   icon: {
     fontSize: 40,
-    marginBottom: 8,
+    marginRight: 12,
   },
   title: {
     fontSize: 16,
     fontWeight: '700',
     color: '#222',
-    marginBottom: 8,
+    flex: 1,
   },
   description: {
     fontSize: 13,
