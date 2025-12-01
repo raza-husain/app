@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet, ScrollView, View, TouchableOpacity, Text } from 'react-native';
+import { StyleSheet, ScrollView, View, Text } from 'react-native';
 import { facilities } from '../data/facilities';
 import { Header, SectionHeader } from '../components/Navigation';
 import { FacilityCard } from '../components/Cards';
@@ -16,6 +16,7 @@ export const FacilitiesScreen: React.FC<FacilitiesScreenProps> = ({ onNavigate }
       <Header 
         title="Facilities"
         subtitle="What we provide for visitors"
+        onBack={() => onNavigate?.('home')}
       />
       
       <ScrollView style={styles.content} contentContainerStyle={{ flexGrow: 1 }} showsVerticalScrollIndicator={false}>
@@ -31,12 +32,6 @@ export const FacilitiesScreen: React.FC<FacilitiesScreenProps> = ({ onNavigate }
         ))}
         <View style={styles.spacing} />
       </ScrollView>
-      <TouchableOpacity
-        style={styles.backButton}
-        onPress={() => onNavigate?.('home')}
-      >
-        <Text style={styles.backButtonText}>← Back to Home</Text>
-      </TouchableOpacity>
     </View>
   );
 };
@@ -45,20 +40,6 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#fff',
-  },
-  backButton: {
-    paddingHorizontal: 16,
-    paddingVertical: 12,
-    backgroundColor: '#d4af37',
-    marginHorizontal: 16,
-    marginVertical: 12,
-    borderRadius: 8,
-    alignItems: 'center',
-  },
-  backButtonText: {
-    fontSize: 14,
-    fontWeight: '700',
-    color: '#1b4d3e',
   },
   content: {
     flex: 1,

@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
-import { StyleSheet, ScrollView, View, Text, TouchableOpacity, TextInput, Platform, KeyboardAvoidingView } from 'react-native';
+import { StyleSheet, ScrollView, View, Text, TouchableOpacity, TextInput, Platform, KeyboardAvoidingView, Modal } from 'react-native';
+import DateTimePicker from '@react-native-community/datetimepicker';
 import { ursUpdates, ursHistory } from '../data/ursEvents';
 import { Header, SectionHeader, TabNavigation } from '../components/Navigation';
-
-type Screen = 'home' | 'services' | 'facilities' | 'guide' | 'events' | 'urs' | 'history' | 'calendar';
+import { Screen } from '../types';
 
 interface CombinedUrsProps {
   onNavigate?: (screen: Screen) => void;
@@ -47,10 +47,37 @@ export const CombinedUrsScreen: React.FC<CombinedUrsProps> = ({ onNavigate }) =>
     updTitle: '', updDate: '', updTime: '', updDescription: '', updCategory: '',
     histYear: '', histDate: '', histTitle: '', histSummary: '', histHighlights: '', histAttendance: ''
   });
+  const [showDatePicker, setShowDatePicker] = useState(false);
+  const [showTimePicker, setShowTimePicker] = useState(false);
+  const [selectedDate, setSelectedDate] = useState(new Date());
+  const [selectedTime, setSelectedTime] = useState(new Date());
+  const [activeDateField, setActiveDateField] = useState<'updDate' | 'histDate'>('updDate');
+
+  const handleDateChange = (event: any, selectedDate?: Date) => {
+    if (selectedDate) {
+      setSelectedDate(selectedDate);
+      const formatted = selectedDate.toLocaleDateString('en-US', { year: 'numeric', month: '2-digit', day: '2-digit' });
+      setForm({ ...form, [activeDateField]: formatted });
+    }
+    if (Platform.OS === 'android') {
+      setShowDatePicker(false);
+    }
+  };
+
+  const handleTimeChange = (event: any, selectedTime?: Date) => {
+    if (selectedTime) {
+      setSelectedTime(selectedTime);
+      const formatted = selectedTime.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: true });
+      setForm({ ...form, updTime: formatted });
+    }
+    if (Platform.OS === 'android') {
+      setShowTimePicker(false);
+    }
+  };
 
   return (
     <View style={styles.container}>
-      <Header title="URS — Updates & History" subtitle="Latest updates and historical archive" />
+      <Header title="Urs — Updates & History" subtitle="Latest updates and historical archive" onBack={() => onNavigate?.('home')} />
       <TabNavigation tabs={tabs} activeTab={activeTab} onTabChange={setActiveTab} />
 
       {/* Admin add button */}
@@ -78,16 +105,12 @@ export const CombinedUrsScreen: React.FC<CombinedUrsProps> = ({ onNavigate }) =>
         <View style={styles.spacing} />
       </ScrollView>
 
-      <TouchableOpacity style={styles.backButton} onPress={() => onNavigate?.('home')}>
-        <Text style={styles.backButtonText}>← Back to Home</Text>
-      </TouchableOpacity>
-
       {/* Admin Form Page (full screen) */}
       {isAdminFormOpen && (
         <View style={styles.formPage}>
           <View style={styles.formHeader}>
             <TouchableOpacity onPress={() => setAdminFormOpen(false)} style={styles.formBack}>
-              <Text style={{fontSize:18}}>←</Text>
+              <Text style={styles.formBackText}>＜</Text>
             </TouchableOpacity>
             <Text style={styles.formHeaderTitle}>Add New {activeTab === 0 ? 'Update' : 'History'}</Text>
           </View>
@@ -96,8 +119,12 @@ export const CombinedUrsScreen: React.FC<CombinedUrsProps> = ({ onNavigate }) =>
               {activeTab === 0 ? (
                 <>
                   <TextInput placeholder="Title" value={form.updTitle} onChangeText={(t) => setForm({...form, updTitle: t})} style={styles.input} />
-                  <TextInput placeholder="Date" value={form.updDate} onChangeText={(t) => setForm({...form, updDate: t})} style={styles.input} />
-                  <TextInput placeholder="Time" value={form.updTime} onChangeText={(t) => setForm({...form, updTime: t})} style={styles.input} />
+                  <TouchableOpacity style={styles.pickerButton} onPress={() => { setActiveDateField('updDate'); setShowDatePicker(true); }}>
+                    <Text style={styles.pickerButtonText}>📅 {form.updDate || 'Select Date'}</Text>
+                  </TouchableOpacity>
+                  <TouchableOpacity style={styles.pickerButton} onPress={() => setShowTimePicker(true)}>
+                    <Text style={styles.pickerButtonText}>🕐 {form.updTime || 'Select Time'}</Text>
+                  </TouchableOpacity>
                   <TextInput placeholder="Category" value={form.updCategory} onChangeText={(t) => setForm({...form, updCategory: t})} style={styles.input} />
                   <TextInput placeholder="Description" value={form.updDescription} onChangeText={(t) => setForm({...form, updDescription: t})} style={[styles.input, styles.inputMultiline]} multiline numberOfLines={3} />
                   <View style={styles.modalButtons}>
@@ -117,7 +144,9 @@ export const CombinedUrsScreen: React.FC<CombinedUrsProps> = ({ onNavigate }) =>
               ) : (
                 <>
                   <TextInput placeholder="Year" value={form.histYear} onChangeText={(t) => setForm({...form, histYear: t})} style={styles.input} />
-                  <TextInput placeholder="Date" value={form.histDate} onChangeText={(t) => setForm({...form, histDate: t})} style={styles.input} />
+                  <TouchableOpacity style={styles.pickerButton} onPress={() => { setActiveDateField('histDate'); setShowDatePicker(true); }}>
+                    <Text style={styles.pickerButtonText}>📅 {form.histDate || 'Select Date'}</Text>
+                  </TouchableOpacity>
                   <TextInput placeholder="Title" value={form.histTitle} onChangeText={(t) => setForm({...form, histTitle: t})} style={styles.input} />
                   <TextInput placeholder="Summary" value={form.histSummary} onChangeText={(t) => setForm({...form, histSummary: t})} style={[styles.input, styles.inputMultiline]} multiline numberOfLines={3} />
                   <TextInput placeholder="Highlights" value={form.histHighlights} onChangeText={(t) => setForm({...form, histHighlights: t})} style={styles.input} />
@@ -139,6 +168,34 @@ export const CombinedUrsScreen: React.FC<CombinedUrsProps> = ({ onNavigate }) =>
               )}
             </ScrollView>
           </KeyboardAvoidingView>
+
+          {/* Date Picker */}
+          {showDatePicker && (
+            <DateTimePicker
+              value={selectedDate}
+              mode="date"
+              display={Platform.OS === 'ios' ? 'spinner' : 'default'}
+              onChange={handleDateChange}
+              textColor="#1b4d3e"
+              accentColor="#1b4d3e"
+              themeVariant="light"
+              style={[styles.datePicker]}
+            />
+          )}
+
+          {/* Time Picker */}
+          {showTimePicker && (
+            <DateTimePicker
+              value={selectedTime}
+              mode="time"
+              display="spinner"
+              onChange={handleTimeChange}
+              textColor="#1b4d3e"
+              accentColor="#1b4d3e"
+              themeVariant="light"
+              is24Hour={false}
+            />
+          )}
         </View>
       )}
     </View>
@@ -199,8 +256,25 @@ const styles = StyleSheet.create({
   modalCancelText: { color: '#1b4d3e' },
   formPage: { position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, backgroundColor: '#fff', zIndex: 20 },
   formHeader: { height: 56, flexDirection: 'row', alignItems: 'center', paddingHorizontal: 12, borderBottomWidth: 1, borderBottomColor: '#eee' },
-  formBack: { padding: 8, marginRight: 8 },
+  formBack: { width: 44, height: 44, borderRadius: 22, backgroundColor: 'rgba(255, 255, 255, 0.85)', alignItems: 'center', justifyContent: 'center', marginRight: 8, shadowColor: '#000', shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.15, shadowRadius: 3, elevation: 3 },
+  formBackText: { fontSize: 20, color: '#000', fontWeight: '700' },
   formHeaderTitle: { fontSize: 16, fontWeight: '700', color: '#1b4d3e' },
+  pickerButton: {
+    borderWidth: 1,
+    borderColor: '#d4af37',
+    padding: 12,
+    borderRadius: 8,
+    marginBottom: 8,
+    backgroundColor: '#f9f9f9',
+  },
+  pickerButtonText: {
+    fontSize: 14,
+    color: '#1b4d3e',
+    fontWeight: '600',
+  },
+  datePicker: {
+    backgroundColor: '#fff',
+  },
 });
 
 export default CombinedUrsScreen;

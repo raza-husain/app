@@ -25,16 +25,33 @@ export const TabNavigation: React.FC<TabNavigationProps> = ({ tabs, activeTab, o
   );
 };
 
+interface BackButtonProps {
+  onPress: () => void;
+  color?: string;
+}
+
+export const BackButton: React.FC<BackButtonProps> = ({ onPress, color = '#fff' }) => {
+  return (
+    <TouchableOpacity onPress={onPress} style={[styles.backButton, { borderColor: color }]}>
+      <Text style={[styles.backButtonText, { color }]}>＜</Text>
+    </TouchableOpacity>
+  );
+};
+
 interface HeaderProps {
   title: string;
   subtitle?: string;
+  onBack?: () => void;
 }
 
-export const Header: React.FC<HeaderProps> = ({ title, subtitle }) => {
+export const Header: React.FC<HeaderProps> = ({ title, subtitle, onBack }) => {
   return (
     <View style={styles.header}>
-      <Text style={styles.headerTitle}>{title}</Text>
-      {subtitle && <Text style={styles.headerSubtitle}>{subtitle}</Text>}
+      {onBack && <BackButton onPress={onBack} color="#fff" />}
+      <View style={styles.headerContent}>
+        <Text style={styles.headerTitle}>{title}</Text>
+        {subtitle && <Text style={styles.headerSubtitle}>{subtitle}</Text>}
+      </View>
     </View>
   );
 };
@@ -79,20 +96,61 @@ const styles = StyleSheet.create({
   activeTabText: {
     color: '#1b4d3e',
   },
+  backButton: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: 'rgba(255, 255, 255, 0.15)',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginRight: 12,
+  },
+  backButtonText: {
+    fontSize: 18,
+    fontWeight: '600',
+    color: '#fff',
+  },
   header: {
     backgroundColor: '#1b4d3e',
-    paddingVertical: 14,
+    paddingVertical: 16,
     paddingHorizontal: 16,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+  },
+  headerBackButton: {
+    paddingRight: 12,
+    paddingVertical: 4,
+    backgroundColor: 'rgba(255, 255, 255, 0.2)',
+    borderRadius: 20,
+    width: 40,
+    height: 40,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  headerBackText: {
+    fontSize: 20,
+    color: '#fff',
+    fontWeight: '700',
+  },
+  headerContent: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingHorizontal: 12,
   },
   headerTitle: {
-    fontSize: 28,
+    fontSize: 24,
     fontWeight: '700',
     color: '#fff',
     marginBottom: 4,
+    textAlign: 'center',
   },
   headerSubtitle: {
-    fontSize: 13,
+    fontSize: 12,
     color: '#d4af37',
+    textAlign: 'center',
+    lineHeight: 16,
   },
   sectionHeader: {
     flexDirection: 'row',

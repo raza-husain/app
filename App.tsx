@@ -3,37 +3,36 @@ import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, View, SafeAreaView, Platform, StatusBar as RNStatusBar } from 'react-native';
 import { HomeScreen } from './src/screens/HomeScreen';
 import { ServicesScreen } from './src/screens/ServicesScreen';
-import { FacilitiesScreen } from './src/screens/FacilitiesScreen';
 import { VisitorGuideScreen } from './src/screens/VisitorGuideScreen';
-// Replaced by combined screens: Events/Calendar -> CombinedEventsScreen, Urs/History -> CombinedUrsScreen
-import CombinedEventsScreen from './src/screens/CombinedEventsScreen';
-import CombinedUrsScreen from './src/screens/CombinedUrsScreen';
-
-type Screen = 'home' | 'services' | 'facilities' | 'guide' | 'events' | 'urs' | 'history' | 'calendar';
+import { CombinedEventsScreen } from './src/screens/CombinedEventsScreen';
+import { CombinedUrsScreen } from './src/screens/CombinedUrsScreen';
+import { Screen } from './src/types';
 
 export default function App() {
   const [currentScreen, setCurrentScreen] = useState<Screen>('home');
 
+  const handleNavigate = (screen: Screen) => {
+    setCurrentScreen(screen);
+  };
+
   const renderScreen = () => {
     switch (currentScreen) {
       case 'home':
-        return <HomeScreen onNavigate={setCurrentScreen} />;
+        return <HomeScreen onNavigate={handleNavigate} />;
       case 'services':
-        return <ServicesScreen onNavigate={setCurrentScreen} />;
-      case 'facilities':
-        return <FacilitiesScreen onNavigate={setCurrentScreen} />;
+        return <ServicesScreen onNavigate={handleNavigate} />;
       case 'guide':
-        return <VisitorGuideScreen onNavigate={setCurrentScreen} />;
+        return <VisitorGuideScreen onNavigate={handleNavigate} />;
       case 'events':
-        return <CombinedEventsScreen onNavigate={setCurrentScreen} />;
+        return <CombinedEventsScreen onNavigate={handleNavigate} />;
       case 'urs':
-        return <CombinedUrsScreen onNavigate={setCurrentScreen} />;
+        return <CombinedUrsScreen onNavigate={handleNavigate} />;
       case 'history':
-        return <CombinedUrsScreen onNavigate={setCurrentScreen} />;
+        return <CombinedUrsScreen onNavigate={handleNavigate} />;
       case 'calendar':
-        return <CombinedEventsScreen onNavigate={setCurrentScreen} />;
+        return <CombinedEventsScreen onNavigate={handleNavigate} />;
       default:
-        return <HomeScreen onNavigate={setCurrentScreen} />;
+        return <HomeScreen onNavigate={handleNavigate} />;
     }
   };
 
