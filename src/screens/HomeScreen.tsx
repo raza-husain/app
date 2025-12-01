@@ -30,14 +30,14 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({ onNavigate }) => {
           <Text style={styles.infoBoxText}>{dargahInfo.description}</Text>
         </View>
 
-        <SectionHeader title="Quick Information" icon="ℹ️" />
+        <SectionHeader title="Quick Information" icon="" />
         <View style={styles.quickInfo}>
           <InfoItem label="Location" value={dargahInfo.location} />
           <InfoItem label="Timing" value={dargahInfo.timing} />
           <InfoItem label="Phone" value={dargahInfo.phone} />
         </View>
 
-        <SectionHeader title="Explore" icon="🗺️" />
+        <SectionHeader title="Explore" icon="" />
         <View style={styles.navGrid}>
           {navItems.map((item) => (
             <View key={item.id} style={styles.navCard}>
@@ -52,16 +52,10 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({ onNavigate }) => {
           ))}
         </View>
 
-        <SectionHeader title="About the Dargah" icon="📖" />
+        <SectionHeader title="About the Dargah" icon="" />
         {aboutDargah.map((item) => (
           <InfoCard key={item.title} title={item.title} content={item.content} />
         ))}
-
-        <View style={styles.footer}>
-          <Text style={styles.footerText}>
-             May your visit be blessed with peace and spiritual enrichment
-          </Text>
-        </View>
       </View>
     </ScrollView>
   );

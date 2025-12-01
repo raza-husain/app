@@ -40,7 +40,7 @@ export interface AnnualEvent {
 export const ursUpdates: UrsEvent[] = [
   {
     id: 'urs-1',
-    title: 'Urs Inauguration & Opening Ceremony',
+    title: 'URS Inauguration & Opening Ceremony',
     date: 'Day 1 - Morning',
     time: '8:00 AM onwards',
     description: 'Grand opening ceremony of the annual Urs of Hazrat Sufi Syed Mansoor-ul-Hasan Shah (R.A.). Featuring special prayers, welcome addresses, and spiritual invocations.',
@@ -125,7 +125,7 @@ export const ursHistory: UrsHistoryEntry[] = [
     id: 'urs-hist-1',
     year: 2024,
     date: '10th Zilqad 1445 AH',
-    title: 'Urs Celebration 2024',
+    title: 'URS Celebration 2024',
     summary: 'A glorious celebration marked by unprecedented devotion and spiritual fervor. Thousands gathered from across the globe to honor the saint.',
     highlights: [
       'Record-breaking attendance from international devotees',

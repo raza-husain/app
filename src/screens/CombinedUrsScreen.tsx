@@ -40,11 +40,9 @@ export const CombinedUrsScreen: React.FC<CombinedUrsProps> = ({ onNavigate }) =>
   const tabs = ['Updates', 'History'];
   const [isAdminFormOpen, setAdminFormOpen] = useState(false);
 
-  // keep local copies so admin additions appear immediately without mutating imports
   const [ursUpdatesList, setUrsUpdatesList] = useState(ursUpdates);
   const [ursHistoryList, setUrsHistoryList] = useState(ursHistory);
 
-  // form state
   const [form, setForm] = useState<any>({
     updTitle: '', updDate: '', updTime: '', updDescription: '', updCategory: '',
     histYear: '', histDate: '', histTitle: '', histSummary: '', histHighlights: '', histAttendance: ''
@@ -52,7 +50,7 @@ export const CombinedUrsScreen: React.FC<CombinedUrsProps> = ({ onNavigate }) =>
 
   return (
     <View style={styles.container}>
-      <Header title="Urs — Updates & History" subtitle="Latest updates and historical archive" />
+      <Header title="URS — Updates & History" subtitle="Latest updates and historical archive" />
       <TabNavigation tabs={tabs} activeTab={activeTab} onTabChange={setActiveTab} />
 
       {/* Admin add button */}
@@ -63,14 +61,14 @@ export const CombinedUrsScreen: React.FC<CombinedUrsProps> = ({ onNavigate }) =>
       <ScrollView style={styles.content} contentContainerStyle={{ flexGrow: 1 }} showsVerticalScrollIndicator={false}>
         {activeTab === 0 ? (
           <>
-            <SectionHeader title="Latest Updates" icon="✨" />
+            <SectionHeader title="Latest Updates" icon="" />
             {ursUpdatesList.map((u) => (
               <UrsUpdateCard key={u.id} title={u.title} date={u.date} time={u.time} description={u.description} category={u.category} />
             ))}
           </>
         ) : (
           <>
-            <SectionHeader title="Historical Archive" icon="📚" />
+            <SectionHeader title="Historical Archive" icon="" />
             {ursHistoryList.map((h) => (
               <HistoryCard key={h.id} year={h.year} date={h.date} title={h.title} summary={h.summary} highlights={h.highlights} attendance={h.attendance} />
             ))}
