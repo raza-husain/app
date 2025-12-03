@@ -96,7 +96,6 @@ export const CombinedUrsScreen: React.FC<CombinedUrsProps> = ({ onNavigate }) =>
 
   useEffect(() => {
     const unsub = subscribe(() => {
-      // registrations changed — Register screen will handle user view
     });
     return unsub;
   }, []);

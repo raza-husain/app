@@ -22,9 +22,7 @@ const notify = () => subscribers.forEach(s => s());
 const saveRegistrations = async () => {
   try {
     await AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(registrations));
-  } catch (e) {
-    // ignore for now
-  }
+  } catch (e) {}
 };
 
 const loadRegistrations = async () => {
@@ -32,17 +30,12 @@ const loadRegistrations = async () => {
     const raw = await AsyncStorage.getItem(STORAGE_KEY);
     if (!raw) return;
     const parsed: Registration[] = JSON.parse(raw);
-    // replace contents of registrations array
     registrations.splice(0, registrations.length, ...parsed);
-  } catch (e) {
-    // ignore parse errors
-  }
+  } catch (e) {}
 };
 
-// kick off loader (best-effort)
 loadRegistrations();
 
-// temporary selected target used when navigating to the register page
 let registrationTarget: { eventId: string; eventName: string; from?: string } | null = null;
 
 export const setRegistrationTarget = (t: { eventId: string; eventName: string; from?: string } | null) => {
@@ -52,14 +45,14 @@ export const setRegistrationTarget = (t: { eventId: string; eventName: string; f
 export const getRegistrationTarget = () => registrationTarget;
 
 export const addRegistration = (r: Omit<Registration, 'id' | 'approved' | 'qrData' | 'createdAt'>) => {
-  // create a sequential id based on event name and existing registrations for the event
+
   const safeName = (r.eventName || 'event').replace(/[^a-zA-Z0-9]/g, '_').slice(0, 40);
   const countForEvent = registrations.filter(x => x.eventId === r.eventId || x.eventName === r.eventName).length + 1;
   const id = `${safeName}_${countForEvent}`;
   const item: Registration = { ...r, id, approved: false, createdAt: Date.now() } as Registration;
   registrations.push(item);
   notify();
-  // persist (fire-and-forget)
+
   void saveRegistrations();
   return item;
 };
@@ -74,7 +67,7 @@ export const approveRegistration = (id: string) => {
   const idx = registrations.findIndex(r => r.id === id);
   if (idx === -1) return null;
   registrations[idx].approved = true;
-  // QR payload as plain text (no JSON, no quotations)
+
   const titleLine = registrations[idx].eventName || 'Event';
   const qrText = `${titleLine}
 Approved for the event
