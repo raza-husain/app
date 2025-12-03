@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet, ScrollView, View, Text } from 'react-native';
+import { StyleSheet, ScrollView, View } from 'react-native';
 import { visitorGuides } from '../data/visitorGuide';
 import { Header, SectionHeader } from '../components/Navigation';
 import { GuideCard } from '../components/Cards';

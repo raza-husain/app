@@ -1,11 +1,12 @@
 import React, { useState } from 'react';
 import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, View, SafeAreaView, Platform, StatusBar as RNStatusBar } from 'react-native';
+import { StyleSheet, SafeAreaView, Platform, StatusBar as RNStatusBar } from 'react-native';
 import { HomeScreen } from './src/screens/HomeScreen';
 import { ServicesScreen } from './src/screens/ServicesScreen';
 import { VisitorGuideScreen } from './src/screens/VisitorGuideScreen';
 import { CombinedEventsScreen } from './src/screens/CombinedEventsScreen';
 import { CombinedUrsScreen } from './src/screens/CombinedUrsScreen';
+import RegisterScreen from './src/screens/RegisterScreen';
 import { Screen } from './src/types';
 
 export default function App() {
@@ -27,6 +28,8 @@ export default function App() {
         return <CombinedEventsScreen onNavigate={handleNavigate} />;
       case 'urs':
         return <CombinedUrsScreen onNavigate={handleNavigate} />;
+      case 'register':
+        return <RegisterScreen onNavigate={handleNavigate} />;
       case 'history':
         return <CombinedUrsScreen onNavigate={handleNavigate} />;
       case 'calendar':

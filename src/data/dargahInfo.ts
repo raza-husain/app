@@ -6,14 +6,13 @@ export const dargahInfo: DargahInfo = {
   description: 'Dargah of Hazrat Khwaja Sufi Syed Mansoor-ul-Hasan Shah (R.A.) - A spiritual sanctuary founded upon the timeless values of love, remembrance, humility, and service. Rooted in the illustrious Hasni Silsila.',
   timing: 'Open Daily - Contact for specific prayer timings',
   location: 'Khanqah Mehfil-e-Hasani, Mulund West, Mumbai, Maharashtra, India',
-  phone: '+91 XXXXX XXXXX',
-  website: 'www.khanqahmehfil.com'
+  phone: '+91 9892003123',
 };
 
 export const aboutDargah = [
   {
     title: 'Introduction',
-    content: 'The Dargah of Hazrat Khwaja Sufi Syed Mansoor-ul-Hasan Shah (R.A.) stands as a spiritual sanctuary founded upon the timeless values of love, remembrance, humility, and service. Rooted in the illustrious Hasni Silsila, the Khanqah welcomes all seekers—offering a space for spiritual growth, purification of the heart, and deep connection with Allah through the teachings of the saints.'
+    content: 'The Dargah of Hazrat Khwaja Sufi Syed Mansoor-ul-Hasan Shah (R.A.) stands as a spiritual sanctuary founded upon the timeless values of love, remembrance, humility, and service. Rooted in the illustrious Hasni Silsila, the Khanqah welcomes all seekers offering a space for spiritual growth, purification of the heart, and deep connection with Allah through the teachings of the saints.'
   },
   {
     title: 'Spiritual Legacy',
@@ -25,6 +24,6 @@ export const aboutDargah = [
   },
   {
     title: 'Community & Spiritual Activities',
-    content: 'The Khanqah serves as a vibrant center of Zikr Circles, Majalis on Tasawwuf, Langar (food distribution), youth programs, and community welfare. The environment nurtures spiritual companionship, humility, and unity—preserving the living legacy of the Hasni Silsila.'
+    content: 'The Khanqah serves as a vibrant center of Zikr Circles, Majalis on Tasawwuf, Langar (food distribution), youth programs, and community welfare. The environment nurtures spiritual companionship, humility, and unity preserving the living legacy of the Hasni Silsila.'
   }
 ];

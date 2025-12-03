@@ -61,16 +61,43 @@ interface EventCardProps {
   time: string;
   description: string;
   significance: string;
+  onRegister?: () => void;
+  alignRegisterInDetails?: boolean;
 }
 
-export const EventCard: React.FC<EventCardProps> = ({ name, date, time, description, significance }) => {
+export const EventCard: React.FC<EventCardProps> = ({ name, date, time, description, significance, onRegister, alignRegisterInDetails }) => {
   return (
     <View style={styles.eventCard}>
-      <Text style={styles.eventName}>{name}</Text>
-      <View style={styles.eventDetails}>
-        <Text style={styles.eventLabel}>📅 {date}</Text>
-        <Text style={styles.eventLabel}>🕐 {time}</Text>
+      <View style={styles.eventTopRow}>
+        <Text style={styles.eventName}>{name}</Text>
+        {!alignRegisterInDetails && onRegister && (
+          <View style={styles.registerButtonWrapper}>
+            <Text onPress={onRegister} style={styles.registerButtonText}>Register</Text>
+          </View>
+        )}
       </View>
+
+      {alignRegisterInDetails && (
+        <View style={[styles.eventDetails, styles.eventDetailsRow]}>
+          <View>
+            <Text style={styles.eventLabel}>📅 {date}</Text>
+            <Text style={styles.eventLabel}>🕐 {time}</Text>
+          </View>
+          {onRegister && (
+            <View style={styles.registerButtonWrapperInline}>
+              <Text onPress={onRegister} style={styles.registerButtonText}>Register</Text>
+            </View>
+          )}
+        </View>
+      )}
+
+      {!alignRegisterInDetails && (
+        <View style={styles.eventDetails}>
+          <Text style={styles.eventLabel}>📅 {date}</Text>
+          <Text style={styles.eventLabel}>🕐 {time}</Text>
+        </View>
+      )}
+
       <Text style={styles.eventDescription}>{description}</Text>
       <Text style={styles.eventSignificance}>✨ {significance}</Text>
     </View>
@@ -223,6 +250,12 @@ const styles = StyleSheet.create({
   eventDetails: {
     marginBottom: 10,
   },
+  eventDetailsRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 10,
+  },
   eventLabel: {
     fontSize: 12,
     color: '#555',
@@ -238,6 +271,30 @@ const styles = StyleSheet.create({
     fontSize: 12,
     color: '#d4af37',
     fontWeight: '600',
+  },
+  eventTopRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    marginBottom: 8,
+  },
+  registerButtonWrapper: {
+    backgroundColor: '#1b4d3e',
+    paddingHorizontal: 10,
+    paddingVertical: 6,
+    borderRadius: 8,
+  },
+  registerButtonWrapperInline: {
+    backgroundColor: '#1b4d3e',
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderRadius: 8,
+    marginLeft: 12,
+  },
+  registerButtonText: {
+    color: '#fff',
+    fontWeight: '700',
+    fontSize: 12,
   },
   facilityCard: {
     backgroundColor: '#fff',

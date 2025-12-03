@@ -1,10 +1,11 @@
-import React, { useState } from 'react';
-import { StyleSheet, ScrollView, View, Text, TouchableOpacity, TextInput, Platform, KeyboardAvoidingView, Modal } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { StyleSheet, ScrollView, View, Text, TouchableOpacity, TextInput, Platform, KeyboardAvoidingView } from 'react-native';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { upcomingEvents } from '../data/events';
 import { monthlyCommerations, annualEvents } from '../data/ursEvents';
 import { Header, SectionHeader, TabNavigation } from '../components/Navigation';
 import { EventCard } from '../components/Cards';
+import { subscribe, setRegistrationTarget } from '../data/registrations';
 import { Screen } from '../types';
 
 interface CombinedEventsProps {
@@ -18,7 +19,7 @@ export const CombinedEventsScreen: React.FC<CombinedEventsProps> = ({ onNavigate
 
   const [upcomingList, setUpcomingList] = useState(upcomingEvents);
   const [annualList, setAnnualList] = useState(annualEvents);
-  const [monthlyList, setMonthlyList] = useState(monthlyCommerations);
+  const [monthlyList] = useState(monthlyCommerations);
 
   const [form, setForm] = useState<any>({ name:'', date:'', time:'', description:'', significance:'', title:'', islamicDate:'', gregorianDate:'', monthDay:'', icon:'' });
   const [showDatePicker, setShowDatePicker] = useState(false);
@@ -26,7 +27,7 @@ export const CombinedEventsScreen: React.FC<CombinedEventsProps> = ({ onNavigate
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [selectedTime, setSelectedTime] = useState(new Date());
 
-  const handleDateChange = (event: any, selectedDate?: Date) => {
+  const handleDateChange = (_evt: any, selectedDate?: Date) => {
     if (selectedDate) {
       setSelectedDate(selectedDate);
       const formatted = selectedDate.toLocaleDateString('en-US', { year: 'numeric', month: '2-digit', day: '2-digit' });
@@ -37,7 +38,7 @@ export const CombinedEventsScreen: React.FC<CombinedEventsProps> = ({ onNavigate
     }
   };
 
-  const handleTimeChange = (event: any, selectedTime?: Date) => {
+  const handleTimeChange = (_evt: any, selectedTime?: Date) => {
     if (selectedTime) {
       setSelectedTime(selectedTime);
       const formatted = selectedTime.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: true });
@@ -46,6 +47,18 @@ export const CombinedEventsScreen: React.FC<CombinedEventsProps> = ({ onNavigate
     if (Platform.OS === 'android') {
       setShowTimePicker(false);
     }
+  };
+
+  useEffect(() => {
+    // registration changes handled on Register screen — keep subscription to refresh lists elsewhere
+    const unsub = subscribe(() => {});
+    return unsub;
+  }, []);
+
+  const openRegister = (eventItem: any) => {
+    // navigate to full page registration
+    setRegistrationTarget({ eventId: eventItem.id, eventName: eventItem.name || eventItem.title, from: 'events' });
+    onNavigate?.('register');
   };
 
   return (
@@ -71,6 +84,7 @@ export const CombinedEventsScreen: React.FC<CombinedEventsProps> = ({ onNavigate
                 time={event.time}
                 description={event.description}
                 significance={event.significance}
+                onRegister={() => openRegister(event)}
               />
             ))}
           </>
@@ -85,6 +99,8 @@ export const CombinedEventsScreen: React.FC<CombinedEventsProps> = ({ onNavigate
                 time=""
                 description={event.description}
                 significance={event.significance}
+                onRegister={() => openRegister(event)}
+                alignRegisterInDetails
               />
             ))}
 
@@ -97,6 +113,8 @@ export const CombinedEventsScreen: React.FC<CombinedEventsProps> = ({ onNavigate
                 time=""
                 description={event.description}
                 significance={event.significance}
+                onRegister={() => openRegister(event)}
+                alignRegisterInDetails
               />
             ))}
           </>
@@ -104,6 +122,8 @@ export const CombinedEventsScreen: React.FC<CombinedEventsProps> = ({ onNavigate
 
         <View style={styles.spacing} />
       </ScrollView>
+
+      
 
       {/* Admin Form Page (full screen) */}
       {isAdminFormOpen && (

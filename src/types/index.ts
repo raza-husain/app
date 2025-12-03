@@ -1,4 +1,4 @@
-export type Screen = 'home' | 'services' | 'facilities' | 'guide' | 'events' | 'urs' | 'history' | 'calendar';
+export type Screen = 'home' | 'services' | 'facilities' | 'guide' | 'events' | 'urs' | 'history' | 'calendar' | 'register';
 
 export interface DargahInfo {
   id: string;

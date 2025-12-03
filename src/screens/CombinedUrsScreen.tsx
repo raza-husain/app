@@ -1,5 +1,6 @@
-import React, { useState } from 'react';
-import { StyleSheet, ScrollView, View, Text, TouchableOpacity, TextInput, Platform, KeyboardAvoidingView, Modal } from 'react-native';
+import { subscribe, setRegistrationTarget } from '../data/registrations';
+import React, { useState, useEffect } from 'react';
+import { StyleSheet, ScrollView, View, Text, TouchableOpacity, TextInput, Platform, KeyboardAvoidingView } from 'react-native';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { ursUpdates, ursHistory } from '../data/ursEvents';
 import { Header, SectionHeader, TabNavigation } from '../components/Navigation';
@@ -9,16 +10,25 @@ interface CombinedUrsProps {
   onNavigate?: (screen: Screen) => void;
 }
 
-const UrsUpdateCard: React.FC<any> = ({ title, date, time, description, category }) => {
+const UrsUpdateCard: React.FC<any> = ({ title, date, time, description, onRegister }) => {
   const [expanded, setExpanded] = useState(false);
   return (
     <View style={styles.card}>
-      <View style={styles.cardHeader}>
-        <Text style={styles.cardTitle}>{title}</Text>
-      </View>
-      <View style={styles.cardMetaRow}>
-        <View style={styles.metaPill}><Text style={styles.metaText}>📅 {date}</Text></View>
-        <View style={styles.metaPill}><Text style={styles.metaText}>🕐 {time}</Text></View>
+      <View style={{flexDirection:'row', justifyContent:'space-between', alignItems:'flex-start'}}>
+        <View style={{flex:1}}>
+          <View style={styles.cardHeader}>
+            <Text style={styles.cardTitle}>{title}</Text>
+          </View>
+          <View style={styles.cardMetaRow}>
+            <View style={styles.metaPill}><Text style={styles.metaText}>📅 {date}</Text></View>
+            <View style={styles.metaPill}><Text style={styles.metaText}>🕐 {time}</Text></View>
+          </View>
+        </View>
+        {onRegister && (
+          <TouchableOpacity style={{backgroundColor:'#1b4d3e', paddingHorizontal:10, paddingVertical:6, borderRadius:8, marginLeft:8}} onPress={onRegister}>
+            <Text style={{color:'#fff', fontWeight:'700', fontSize:12}}>Register</Text>
+          </TouchableOpacity>
+        )}
       </View>
       <Text style={styles.cardDescription} numberOfLines={expanded ? 0 : 3}>{description}</Text>
       <Text onPress={() => setExpanded(!expanded)} style={styles.readMore}>{expanded ? 'Show less' : 'Read more'}</Text>
@@ -26,10 +36,19 @@ const UrsUpdateCard: React.FC<any> = ({ title, date, time, description, category
   );
 };
 
-const HistoryCard: React.FC<any> = ({ year, date, title, summary, highlights, attendance }) => (
+const HistoryCard: React.FC<any> = ({ year, title, summary, onRegister }) => (
   <View style={styles.card}>
-    <View style={styles.cardHeader}>
-      <Text style={styles.cardTitle}>{title} • {year}</Text>
+    <View style={{flexDirection:'row', justifyContent:'space-between', alignItems:'flex-start'}}>
+      <View style={{flex:1}}>
+        <View style={styles.cardHeader}>
+          <Text style={styles.cardTitle}>{title} • {year}</Text>
+        </View>
+      </View>
+      {onRegister && (
+        <TouchableOpacity style={{backgroundColor:'#1b4d3e', paddingHorizontal:10, paddingVertical:6, borderRadius:8, marginLeft:8}} onPress={onRegister}>
+          <Text style={{color:'#fff', fontWeight:'700', fontSize:12}}>Register</Text>
+        </TouchableOpacity>
+      )}
     </View>
     <Text style={styles.cardDescription}>{summary}</Text>
   </View>
@@ -53,7 +72,7 @@ export const CombinedUrsScreen: React.FC<CombinedUrsProps> = ({ onNavigate }) =>
   const [selectedTime, setSelectedTime] = useState(new Date());
   const [activeDateField, setActiveDateField] = useState<'updDate' | 'histDate'>('updDate');
 
-  const handleDateChange = (event: any, selectedDate?: Date) => {
+  const handleDateChange = (_evt: any, selectedDate?: Date) => {
     if (selectedDate) {
       setSelectedDate(selectedDate);
       const formatted = selectedDate.toLocaleDateString('en-US', { year: 'numeric', month: '2-digit', day: '2-digit' });
@@ -64,7 +83,7 @@ export const CombinedUrsScreen: React.FC<CombinedUrsProps> = ({ onNavigate }) =>
     }
   };
 
-  const handleTimeChange = (event: any, selectedTime?: Date) => {
+  const handleTimeChange = (_evt: any, selectedTime?: Date) => {
     if (selectedTime) {
       setSelectedTime(selectedTime);
       const formatted = selectedTime.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: true });
@@ -74,6 +93,20 @@ export const CombinedUrsScreen: React.FC<CombinedUrsProps> = ({ onNavigate }) =>
       setShowTimePicker(false);
     }
   };
+
+  useEffect(() => {
+    const unsub = subscribe(() => {
+      // registrations changed — Register screen will handle user view
+    });
+    return unsub;
+  }, []);
+
+  const openRegister = (ursItem: any) => {
+    setRegistrationTarget({ eventId: ursItem.id, eventName: ursItem.title || ursItem.name, from: 'urs' });
+    onNavigate?.('register');
+  };
+
+  
 
   return (
     <View style={styles.container}>
@@ -90,7 +123,7 @@ export const CombinedUrsScreen: React.FC<CombinedUrsProps> = ({ onNavigate }) =>
           <>
             <SectionHeader title="Latest Updates" icon="" />
             {ursUpdatesList.map((u) => (
-              <UrsUpdateCard key={u.id} title={u.title} date={u.date} time={u.time} description={u.description} category={u.category} />
+              <UrsUpdateCard key={u.id} title={u.title} date={u.date} time={u.time} description={u.description} category={u.category} onRegister={() => openRegister(u)} />
             ))}
           </>
         ) : (
@@ -105,7 +138,7 @@ export const CombinedUrsScreen: React.FC<CombinedUrsProps> = ({ onNavigate }) =>
         <View style={styles.spacing} />
       </ScrollView>
 
-      {/* Admin Form Page (full screen) */}
+      
       {isAdminFormOpen && (
         <View style={styles.formPage}>
           <View style={styles.formHeader}>

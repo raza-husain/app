@@ -1,7 +1,7 @@
 import React from 'react';
-import { StyleSheet, ScrollView, View, TouchableOpacity, Text } from 'react-native';
+import { StyleSheet, ScrollView, View } from 'react-native';
 import { services } from '../data/services';
-import { Header, SectionHeader } from '../components/Navigation';
+import { Header } from '../components/Navigation';
 import { ServiceCard } from '../components/Cards';
 
 type Screen = 'home' | 'services' | 'facilities' | 'guide' | 'events' | 'urs' | 'history' | 'calendar';
