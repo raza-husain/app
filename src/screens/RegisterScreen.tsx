@@ -2,8 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { View, Text, StyleSheet, TextInput, TouchableOpacity, ScrollView, KeyboardAvoidingView, Platform } from 'react-native';
 import { Header } from '../components/Navigation';
 import { addRegistration, getRegistrationTarget, getRegistrationsByPhone, subscribe, setRegistrationTarget } from '../data/registrations';
-// @ts-ignore
-const QRCode: any = require('react-native-qrcode-svg');
+import QRCode from 'react-native-qrcode-svg';
 import { Screen } from '../types';
 
 interface RegisterScreenProps {
