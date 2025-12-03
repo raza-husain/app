@@ -16,7 +16,6 @@ export const CombinedEventsScreen: React.FC<CombinedEventsProps> = ({ onNavigate
   const tabs = ['Upcoming Events', 'Calendar'];
   const [isAdminFormOpen, setAdminFormOpen] = useState(false);
 
-  // local copies to show admin additions immediately
   const [upcomingList, setUpcomingList] = useState(upcomingEvents);
   const [annualList, setAnnualList] = useState(annualEvents);
   const [monthlyList, setMonthlyList] = useState(monthlyCommerations);
@@ -63,7 +62,7 @@ export const CombinedEventsScreen: React.FC<CombinedEventsProps> = ({ onNavigate
       <ScrollView style={styles.content} contentContainerStyle={{ flexGrow: 1 }} showsVerticalScrollIndicator={false}>
         {activeTab === 0 ? (
           <>
-            <SectionHeader title="Upcoming & Regular Events" icon="🎉" />
+            <SectionHeader title="Upcoming & Regular Events" icon="" />
             {upcomingList.map((event) => (
               <EventCard
                 key={event.id}
@@ -77,7 +76,7 @@ export const CombinedEventsScreen: React.FC<CombinedEventsProps> = ({ onNavigate
           </>
         ) : (
           <>
-            <SectionHeader title="Annual Commemorations" icon="📅" />
+            <SectionHeader title="Annual Commemorations" icon="" />
             {annualList.map((event) => (
               <EventCard
                 key={event.id}
@@ -121,10 +120,10 @@ export const CombinedEventsScreen: React.FC<CombinedEventsProps> = ({ onNavigate
                 <>
                   <TextInput placeholder="Name" value={form.name} onChangeText={(t) => setForm({...form, name: t})} style={styles.input} />
                   <TouchableOpacity style={styles.pickerButton} onPress={() => setShowDatePicker(true)}>
-                    <Text style={styles.pickerButtonText}>📅 {form.date || 'Select Date'}</Text>
+                    <Text style={styles.pickerButtonText}> {form.date || 'Select Date'}</Text>
                   </TouchableOpacity>
                   <TouchableOpacity style={styles.pickerButton} onPress={() => setShowTimePicker(true)}>
-                    <Text style={styles.pickerButtonText}>🕐 {form.time || 'Select Time'}</Text>
+                    <Text style={styles.pickerButtonText}> {form.time || 'Select Time'}</Text>
                   </TouchableOpacity>
                   <TextInput placeholder="Description" value={form.description} onChangeText={(t) => setForm({...form, description: t})} style={[styles.input, styles.inputMultiline]} multiline numberOfLines={3} />
                   <TextInput placeholder="Significance" value={form.significance} onChangeText={(t) => setForm({...form, significance: t})} style={styles.input} />
