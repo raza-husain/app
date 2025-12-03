@@ -7,6 +7,7 @@ import { VisitorGuideScreen } from './src/screens/VisitorGuideScreen';
 import { CombinedEventsScreen } from './src/screens/CombinedEventsScreen';
 import { CombinedUrsScreen } from './src/screens/CombinedUrsScreen';
 import RegisterScreen from './src/screens/RegisterScreen';
+import AdminScreen from './src/screens/AdminScreen';
 import { Screen } from './src/types';
 
 export default function App() {
@@ -28,6 +29,8 @@ export default function App() {
         return <CombinedEventsScreen onNavigate={handleNavigate} />;
       case 'urs':
         return <CombinedUrsScreen onNavigate={handleNavigate} />;
+      case 'admin':
+        return <AdminScreen onNavigate={handleNavigate} />;
       case 'register':
         return <RegisterScreen onNavigate={handleNavigate} />;
       case 'history':

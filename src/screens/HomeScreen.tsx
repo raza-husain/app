@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { StyleSheet, Text, View, ScrollView, TouchableOpacity, Modal, TextInput } from 'react-native';
+import { StyleSheet, Text, View, ScrollView, TouchableOpacity, TextInput, Modal } from 'react-native';
 import { dargahInfo, aboutDargah } from '../data/dargahInfo';
 import { Header, SectionHeader } from '../components/Navigation';
-import { getRegistrations, subscribe, approveRegistration, getRegistrationsByPhone } from '../data/registrations';
+import { subscribe, getRegistrationsByPhone } from '../data/registrations';
 import QRCode from 'react-native-qrcode-svg';
 import { InfoCard } from '../components/Cards';
 
-type Screen = 'home' | 'services' | 'facilities' | 'guide' | 'events' | 'urs' | 'history' | 'calendar';
+import { Screen } from '../types';
 
 interface HomeScreenProps {
   onNavigate?: (screen: Screen) => void;
@@ -19,10 +19,6 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({ onNavigate }) => {
     { id: 'urs', label: 'Urs Updates & History', icon: '✨' },
   ];
 
-  const [adminModal, setAdminModal] = useState(false);
-  const [adminPass, setAdminPass] = useState('');
-  const [isAdminAuth, setIsAdminAuth] = useState(false);
-  const [requests, setRequests] = useState<any[]>([]);
   const [userModal, setUserModal] = useState(false);
   const [userPhone, setUserPhone] = useState('');
   const [userEmail, setUserEmail] = useState('');
@@ -30,15 +26,6 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({ onNavigate }) => {
   const [isUserLoggedIn, setIsUserLoggedIn] = useState(false);
 
   useEffect(() => {
-    // subscribe to registrations list for admin panel
-    const unsub = subscribe(() => setRequests(getRegistrations()));
-    // init
-    setRequests(getRegistrations());
-    return unsub;
-  }, []);
-
-  useEffect(() => {
-    // subscribe to registration changes for the logged in user
     if (!userPhone) return;
     const unsub = subscribe(() => setUserRegs(getRegistrationsByPhone(userPhone)));
     setUserRegs(getRegistrationsByPhone(userPhone));
@@ -60,7 +47,7 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({ onNavigate }) => {
 
         {/* Admin and User login buttons */}
         <View style={{flexDirection:'row', justifyContent:'flex-end', paddingHorizontal:16, marginBottom:12}}>
-          <TouchableOpacity style={{backgroundColor:'#1b4d3e', paddingHorizontal:12, paddingVertical:8, borderRadius:8, marginRight:8}} onPress={() => setAdminModal(true)}>
+          <TouchableOpacity style={{backgroundColor:'#1b4d3e', paddingHorizontal:12, paddingVertical:8, borderRadius:8, marginRight:8}} onPress={() => onNavigate?.('admin')}>
             <Text style={{color:'#fff', fontWeight:'700'}}>Admin Login</Text>
           </TouchableOpacity>
           <TouchableOpacity style={{backgroundColor:'#d4af37', paddingHorizontal:12, paddingVertical:8, borderRadius:8}} onPress={() => setUserModal(true)}>
@@ -95,82 +82,7 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({ onNavigate }) => {
           <InfoCard key={item.title} title={item.title} content={item.content} />
         ))}
       
-        {/* Admin Modal */}
-        <Modal visible={adminModal} animationType="slide" transparent>
-          <View style={{flex:1, justifyContent:'center', alignItems:'center'}}>
-            <View style={{width:'90%', backgroundColor:'#fff', padding:16, borderRadius:10, elevation:6}}>
-              <View style={{flexDirection:'row', justifyContent:'space-between', alignItems:'center'}}>
-                <Text style={{fontWeight:'700', fontSize:16}}>Admin Panel</Text>
-                <TouchableOpacity onPress={() => { setAdminModal(false); setIsAdminAuth(false); setAdminPass(''); }}>
-                  <Text style={{color:'#1b4d3e', fontWeight:'700'}}>Close</Text>
-                </TouchableOpacity>
-              </View>
-              {!isAdminAuth ? (
-                <>
-                  <Text style={{marginTop:12, marginBottom:6}}>Enter admin password</Text>
-                  <TextInput value={adminPass} onChangeText={setAdminPass} placeholder="Password" style={{borderWidth:1, borderColor:'#eee', padding:8, borderRadius:8}} secureTextEntry />
-                  <View style={{flexDirection:'row', marginTop:12}}>
-                    <TouchableOpacity style={{flex:1, backgroundColor:'#1b4d3e', padding:10, borderRadius:8, alignItems:'center'}} onPress={() => {
-                      if (adminPass === 'admin123') {
-                        setIsAdminAuth(true);
-                      } else {
-                        alert('Invalid password');
-                      }
-                    }}>
-                      <Text style={{color:'#fff', fontWeight:'700'}}>Login</Text>
-                    </TouchableOpacity>
-                  </View>
-                </>
-              ) : (
-                <>
-                  <View style={{marginBottom:16}}>
-                    <Text style={{fontWeight:'700', fontSize:14, marginBottom:8, color:'#1b4d3e'}}>Pending Requests</Text>
-                    {requests.filter(r => !r.approved).length === 0 ? (
-                      <Text style={{color:'#999', fontSize:12}}>No pending requests.</Text>
-                    ) : (
-                      requests.filter(r => !r.approved).map((r) => (
-                        <View key={r.id} style={{padding:12, borderWidth:1, borderColor:'#ffb74d', borderRadius:8, marginBottom:8, backgroundColor:'#fff8e1'}}>
-                          <Text style={{fontWeight:'700'}}>{r.name}</Text>
-                          <Text style={{color:'#666', fontSize:12, marginTop:4}}>📱 {r.phone}</Text>
-                          {r.email && <Text style={{color:'#666', fontSize:12}}>📧 {r.email}</Text>}
-                          <Text style={{color:'#1b4d3e', marginTop:4, fontWeight:'700'}}>{r.eventName}</Text>
-                          <Text style={{fontSize:11, color:'#999', marginTop:6}}>{new Date(r.createdAt).toLocaleString()}</Text>
-                          <TouchableOpacity style={{backgroundColor:'#1b4d3e', padding:10, borderRadius:8, marginTop:8, alignItems:'center'}} onPress={() => {
-                            approveRegistration(r.id);
-                          }}>
-                            <Text style={{color:'#fff', fontWeight:'700'}}>Approve</Text>
-                          </TouchableOpacity>
-                        </View>
-                      ))
-                    )}
-                  </View>
-
-                  <View>
-                    <Text style={{fontWeight:'700', fontSize:14, marginBottom:8, color:'#1b4d3e'}}>Approved Users</Text>
-                    {requests.filter(r => r.approved).length === 0 ? (
-                      <Text style={{color:'#999', fontSize:12}}>No approved users yet.</Text>
-                    ) : (
-                      <ScrollView style={{maxHeight:200}}>
-                        {requests.filter(r => r.approved).map((r) => (
-                          <View key={r.id} style={{padding:12, borderWidth:1, borderColor:'#4caf50', borderRadius:8, marginBottom:8, backgroundColor:'#f1f8f4'}}>
-                            <Text style={{fontWeight:'700'}}>{r.name}</Text>
-                            <Text style={{color:'#666', fontSize:12, marginTop:4}}>📱 {r.phone}</Text>
-                            {r.email && <Text style={{color:'#666', fontSize:12}}>📧 {r.email}</Text>}
-                            <Text style={{color:'#1b4d3e', marginTop:4, fontWeight:'700'}}>{r.eventName}</Text>
-                            <View style={{backgroundColor:'#fff', padding:8, borderRadius:6, marginTop:8, borderWidth:1, borderColor:'#e0e0e0'}}>
-                              <Text style={{fontWeight:'600', color:'#1b4d3e', fontSize:12}}>Registration ID</Text>
-                              <Text style={{color:'#333', marginTop:4, fontFamily:'monospace', fontSize:11}}>{r.id}</Text>
-                            </View>
-                          </View>
-                        ))}
-                      </ScrollView>
-                    )}
-                  </View>
-                </>
-              )}
-            </View>
-          </View>
-        </Modal>
+        {/* Admin login moved to a separate page (Admin screen) */}
         {/* User Modal */}
         <Modal visible={userModal} animationType="slide" transparent>
           <View style={{flex:1, justifyContent:'flex-end', backgroundColor:'rgba(0,0,0,0.5)'}}>
