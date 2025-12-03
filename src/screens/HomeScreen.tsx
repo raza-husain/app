@@ -37,6 +37,7 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({ onNavigate }) => {
       <Header 
         title={dargahInfo.name}
         subtitle="A sanctuary of love, remembrance, and spiritual guidance"
+        onBack={() => { /* Back button intentionally left non-functional on HomeScreen */ }}
       />
 
       <View style={styles.content}>

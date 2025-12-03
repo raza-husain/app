@@ -116,7 +116,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'space-between',
+    justifyContent: 'flex-start',
   },
   headerBackButton: {
     paddingRight: 12,
@@ -135,7 +135,7 @@ const styles = StyleSheet.create({
   },
   headerContent: {
     flex: 1,
-    alignItems: 'center',
+    alignItems: 'flex-start',
     justifyContent: 'center',
     paddingHorizontal: 12,
   },
@@ -144,12 +144,12 @@ const styles = StyleSheet.create({
     fontWeight: '700',
     color: '#fff',
     marginBottom: 4,
-    textAlign: 'center',
+    textAlign: 'left',
   },
   headerSubtitle: {
     fontSize: 12,
     color: '#d4af37',
-    textAlign: 'center',
+    textAlign: 'left',
     lineHeight: 16,
   },
   sectionHeader: {
