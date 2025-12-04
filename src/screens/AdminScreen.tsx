@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, ScrollView } from 'react-native';
+import { View, Text, TouchableOpacity, ScrollView } from 'react-native';
+import FormInput from '../components/FormField';
 import { Header } from '../components/Navigation';
 import { getRegistrations, subscribe, approveRegistration } from '../data/registrations';
 import { Screen } from '../types';
@@ -24,9 +25,9 @@ const AdminScreen: React.FC<AdminScreenProps> = ({ onNavigate }) => {
       <Header title="Admin Panel" subtitle="Manage registrations" onBack={() => onNavigate?.('home')} />
       <ScrollView contentContainerStyle={{padding:16}}>
         {!isAdminAuth ? (
-          <View style={{marginTop:20}}>
+            <View style={{marginTop:20}}>
             <Text style={{marginBottom:12}}>Enter admin password</Text>
-            <TextInput value={adminPass} onChangeText={setAdminPass} placeholder="Password" style={{borderWidth:1, borderColor:'#eee', padding:8, borderRadius:8}} secureTextEntry />
+            <FormInput value={adminPass} onChangeText={setAdminPass} placeholder="Password" secureTextEntry />
             <View style={{flexDirection:'row', marginTop:12}}>
               <TouchableOpacity style={{flex:1, backgroundColor:'#1b4d3e', padding:10, borderRadius:8, alignItems:'center'}} onPress={() => {
                 if (adminPass === 'admin123') {

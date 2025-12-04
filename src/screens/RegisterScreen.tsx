@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, TextInput, TouchableOpacity, ScrollView, KeyboardAvoidingView, Platform } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, ScrollView, KeyboardAvoidingView, Platform } from 'react-native';
+import FormInput from '../components/FormField';
 import { Header } from '../components/Navigation';
 import { addRegistration, getRegistrationTarget, getRegistrationsByPhone, subscribe, setRegistrationTarget } from '../data/registrations';
 import QRCode from 'react-native-qrcode-svg';
@@ -58,13 +59,13 @@ const RegisterScreen: React.FC<RegisterScreenProps> = ({ onNavigate }) => {
           <Text style={{color:'#666', marginBottom:12}}>Fill in your details to request registration for this event. Admin will approve and you'll receive a QR code once approved.</Text>
 
           <Text style={styles.label}>Full name *</Text>
-          <TextInput value={name} onChangeText={setName} placeholder="Your full name" style={styles.input} placeholderTextColor="#999" />
+          <FormInput value={name} onChangeText={setName} placeholder="Your full name" placeholderTextColor="#999" />
 
           <Text style={styles.label}>Mobile number *</Text>
-          <TextInput value={phone} onChangeText={setPhone} placeholder="Mobile number" style={styles.input} keyboardType="phone-pad" placeholderTextColor="#999" />
+          <FormInput value={phone} onChangeText={setPhone} placeholder="Mobile number" keyboardType="phone-pad" placeholderTextColor="#999" />
 
           <Text style={styles.label}>Email (optional)</Text>
-          <TextInput value={email} onChangeText={setEmail} placeholder="Email" style={styles.input} keyboardType="email-address" placeholderTextColor="#999" />
+          <FormInput value={email} onChangeText={setEmail} placeholder="Email" keyboardType="email-address" placeholderTextColor="#999" />
 
           <TouchableOpacity style={styles.submit} onPress={submit}>
             <Text style={{color:'#fff', fontWeight:'700'}}>Submit Request</Text>

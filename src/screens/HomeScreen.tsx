@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { StyleSheet, Text, View, ScrollView, TouchableOpacity, TextInput, Modal } from 'react-native';
+import { StyleSheet, Text, View, ScrollView, TouchableOpacity, Modal } from 'react-native';
+import FormInput from '../components/FormField';
 import { dargahInfo, aboutDargah } from '../data/dargahInfo';
 import { Header, SectionHeader } from '../components/Navigation';
 import { subscribe, getRegistrationsByPhone } from '../data/registrations';
@@ -103,23 +104,9 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({ onNavigate }) => {
               {!isUserLoggedIn ? (
                 <>
                   <Text style={{marginBottom:6, fontWeight:'600'}}>Mobile Number *</Text>
-                  <TextInput 
-                    value={userPhone} 
-                    onChangeText={setUserPhone} 
-                    placeholder="Enter mobile number" 
-                    style={{borderWidth:1, borderColor:'#ddd', padding:10, borderRadius:8, marginBottom:12}} 
-                    keyboardType="phone-pad"
-                    placeholderTextColor="#999"
-                  />
+                  <FormInput value={userPhone} onChangeText={setUserPhone} placeholder="Enter mobile number" keyboardType="phone-pad" />
                   <Text style={{marginBottom:6, fontWeight:'600', color:'#666'}}>Email (optional)</Text>
-                  <TextInput 
-                    value={userEmail} 
-                    onChangeText={setUserEmail} 
-                    placeholder="Enter email" 
-                    style={{borderWidth:1, borderColor:'#ddd', padding:10, borderRadius:8, marginBottom:16}} 
-                    keyboardType="email-address"
-                    placeholderTextColor="#999"
-                  />
+                  <FormInput value={userEmail} onChangeText={setUserEmail} placeholder="Enter email" keyboardType="email-address" />
                   <TouchableOpacity 
                     style={{backgroundColor:'#d4af37', padding:12, borderRadius:8, alignItems:'center'}} 
                     onPress={() => {

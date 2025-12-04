@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { StyleSheet, ScrollView, View, Text, TouchableOpacity, TextInput, Platform, KeyboardAvoidingView } from 'react-native';
+import { StyleSheet, ScrollView, View, Text, TouchableOpacity, Platform, KeyboardAvoidingView } from 'react-native';
+import FormInput, { PickerButton } from '../components/FormField';
 import DateTimePicker from '@react-native-community/datetimepicker';
+import { gregorianToHijri, formatInputToDDMMYYYY } from '../utils/dateUtils';
 import { upcomingEvents } from '../data/events';
 import { monthlyCommerations, annualEvents } from '../data/ursEvents';
 import { Header, SectionHeader, TabNavigation } from '../components/Navigation';
@@ -26,12 +28,18 @@ export const CombinedEventsScreen: React.FC<CombinedEventsProps> = ({ onNavigate
   const [showTimePicker, setShowTimePicker] = useState(false);
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [selectedTime, setSelectedTime] = useState(new Date());
+  const [dateField, setDateField] = useState<'event' | 'calendar'>('event');
 
   const handleDateChange = (_evt: any, selectedDate?: Date) => {
     if (selectedDate) {
       setSelectedDate(selectedDate);
       const formatted = selectedDate.toLocaleDateString('en-US', { year: 'numeric', month: '2-digit', day: '2-digit' });
-      setForm({ ...form, date: formatted });
+      if (dateField === 'event') {
+        setForm({ ...form, date: formatted });
+      } else {
+        const h = gregorianToHijri(selectedDate);
+        setForm({ ...form, gregorianDate: formatted, islamicDate: h.formatted });
+      }
     }
     if (Platform.OS === 'android') {
       setShowDatePicker(false);
@@ -50,13 +58,11 @@ export const CombinedEventsScreen: React.FC<CombinedEventsProps> = ({ onNavigate
   };
 
   useEffect(() => {
-    // registration changes handled on Register screen — keep subscription to refresh lists elsewhere
     const unsub = subscribe(() => {});
     return unsub;
   }, []);
 
   const openRegister = (eventItem: any) => {
-    // navigate to full page registration
     setRegistrationTarget({ eventId: eventItem.id, eventName: eventItem.name || eventItem.title, from: 'events' });
     onNavigate?.('register');
   };
@@ -138,15 +144,11 @@ export const CombinedEventsScreen: React.FC<CombinedEventsProps> = ({ onNavigate
             <ScrollView contentContainerStyle={{padding:12}}>
               {activeTab === 0 ? (
                 <>
-                  <TextInput placeholder="Name" value={form.name} onChangeText={(t) => setForm({...form, name: t})} style={styles.input} />
-                  <TouchableOpacity style={styles.pickerButton} onPress={() => setShowDatePicker(true)}>
-                    <Text style={styles.pickerButtonText}> {form.date || 'Select Date'}</Text>
-                  </TouchableOpacity>
-                  <TouchableOpacity style={styles.pickerButton} onPress={() => setShowTimePicker(true)}>
-                    <Text style={styles.pickerButtonText}> {form.time || 'Select Time'}</Text>
-                  </TouchableOpacity>
-                  <TextInput placeholder="Description" value={form.description} onChangeText={(t) => setForm({...form, description: t})} style={[styles.input, styles.inputMultiline]} multiline numberOfLines={3} />
-                  <TextInput placeholder="Significance" value={form.significance} onChangeText={(t) => setForm({...form, significance: t})} style={styles.input} />
+                  <FormInput placeholder="Name" value={form.name} onChangeText={(t) => setForm({...form, name: t})} />
+                  <PickerButton label={form.date || 'Select Date'} onPress={() => { setDateField('event'); setShowDatePicker(true); }} />
+                  <PickerButton label={form.time || 'Select Time'} onPress={() => setShowTimePicker(true)} />
+                  <FormInput placeholder="Description" value={form.description} onChangeText={(t) => setForm({...form, description: t})} style={{ minHeight: 80, textAlignVertical: 'top' }} multiline numberOfLines={3} />
+                  <FormInput placeholder="Significance" value={form.significance} onChangeText={(t) => setForm({...form, significance: t})} />
                   <View style={styles.modalButtons}>
                     <TouchableOpacity style={styles.modalButton} onPress={() => {
                       const newItem = { id: Date.now().toString(), name: form.name || 'Untitled', date: form.date || '', time: form.time || '', description: form.description || '', significance: form.significance || '' };
@@ -163,13 +165,13 @@ export const CombinedEventsScreen: React.FC<CombinedEventsProps> = ({ onNavigate
                 </>
               ) : (
                 <>
-                  <TextInput placeholder="Title" value={form.title} onChangeText={(t) => setForm({...form, title: t})} style={styles.input} />
-                  <TextInput placeholder="Islamic Date" value={form.islamicDate} onChangeText={(t) => setForm({...form, islamicDate: t})} style={styles.input} />
-                  <TextInput placeholder="Gregorian Date" value={form.gregorianDate} onChangeText={(t) => setForm({...form, gregorianDate: t})} style={styles.input} />
-                  <TextInput placeholder="Month Day" value={form.monthDay} onChangeText={(t) => setForm({...form, monthDay: t})} style={styles.input} />
-                  <TextInput placeholder="Description" value={form.description} onChangeText={(t) => setForm({...form, description: t})} style={[styles.input, styles.inputMultiline]} multiline numberOfLines={3} />
-                  <TextInput placeholder="Significance" value={form.significance} onChangeText={(t) => setForm({...form, significance: t})} style={styles.input} />
-                  <TextInput placeholder="Icon" value={form.icon} onChangeText={(t) => setForm({...form, icon: t})} style={styles.input} />
+                  <FormInput placeholder="Title" value={form.title} onChangeText={(t) => setForm({...form, title: t})} />
+                  <PickerButton label={form.gregorianDate || 'Select Gregorian Date'} onPress={() => { setDateField('calendar'); setShowDatePicker(true); }} />
+                  <FormInput placeholder="Islamic Date (dd/mm/yyyy)" value={form.islamicDate} onChangeText={(t) => setForm({...form, islamicDate: formatInputToDDMMYYYY(t)})} />
+                  {/* Use the same calendar picker UI as the Add Event form for Gregorian date */}
+                  <FormInput placeholder="Description" value={form.description} onChangeText={(t) => setForm({...form, description: t})} style={{ minHeight: 80, textAlignVertical: 'top' }} multiline numberOfLines={3} />
+                  <FormInput placeholder="Significance" value={form.significance} onChangeText={(t) => setForm({...form, significance: t})} />
+                  <FormInput placeholder="Icon" value={form.icon} onChangeText={(t) => setForm({...form, icon: t})} />
                   <View style={styles.modalButtons}>
                     <TouchableOpacity style={styles.modalButton} onPress={() => {
                       const newAnnual = { id: Date.now().toString(), title: form.title || 'Untitled', islamicDate: form.islamicDate || '', gregorianDate: form.gregorianDate || '', description: form.description || '', significance: form.significance || '', icon: form.icon || '📅' };
@@ -265,17 +267,12 @@ const styles = StyleSheet.create({
   formHeaderTitle: { fontSize: 16, fontWeight: '700', color: '#1b4d3e' },
   pickerButton: {
     borderWidth: 1,
-    borderColor: '#d4af37',
     padding: 12,
     borderRadius: 8,
     marginBottom: 8,
     backgroundColor: '#f9f9f9',
   },
-  pickerButtonText: {
-    fontSize: 14,
-    color: '#1b4d3e',
-    fontWeight: '600',
-  },
+
   datePicker: {
     backgroundColor: '#fff',
   },

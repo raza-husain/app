@@ -79,7 +79,7 @@ export const EventCard: React.FC<EventCardProps> = ({ name, date, time, descript
 
       {alignRegisterInDetails && (
         <View style={[styles.eventDetails, styles.eventDetailsRow]}>
-          <View>
+          <View style={styles.eventDetailsLeft}>
             <Text style={styles.eventLabel}>📅 {date}</Text>
             <Text style={styles.eventLabel}>🕐 {time}</Text>
           </View>
@@ -252,7 +252,6 @@ const styles = StyleSheet.create({
   },
   eventDetailsRow: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
     alignItems: 'center',
     marginBottom: 10,
   },
@@ -260,6 +259,8 @@ const styles = StyleSheet.create({
     fontSize: 12,
     color: '#555',
     marginVertical: 3,
+    flexWrap: 'wrap',
+    flexShrink: 1,
   },
   eventDescription: {
     fontSize: 13,
@@ -290,6 +291,13 @@ const styles = StyleSheet.create({
     paddingVertical: 6,
     borderRadius: 8,
     marginLeft: 12,
+    alignSelf: 'center',
+    flexShrink: 0,
+  },
+
+  eventDetailsLeft: {
+    flex: 1,
+    paddingRight: 8,
   },
   registerButtonText: {
     color: '#fff',

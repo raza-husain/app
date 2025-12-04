@@ -1,6 +1,7 @@
 import { subscribe, setRegistrationTarget } from '../data/registrations';
 import React, { useState, useEffect } from 'react';
-import { StyleSheet, ScrollView, View, Text, TouchableOpacity, TextInput, Platform, KeyboardAvoidingView } from 'react-native';
+import { StyleSheet, ScrollView, View, Text, TouchableOpacity, Platform, KeyboardAvoidingView } from 'react-native';
+import FormInput, { PickerButton } from '../components/FormField';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { ursUpdates, ursHistory } from '../data/ursEvents';
 import { Header, SectionHeader, TabNavigation } from '../components/Navigation';
@@ -150,15 +151,11 @@ export const CombinedUrsScreen: React.FC<CombinedUrsProps> = ({ onNavigate }) =>
             <ScrollView contentContainerStyle={{padding:12}}>
               {activeTab === 0 ? (
                 <>
-                  <TextInput placeholder="Title" value={form.updTitle} onChangeText={(t) => setForm({...form, updTitle: t})} style={styles.input} />
-                  <TouchableOpacity style={styles.pickerButton} onPress={() => { setActiveDateField('updDate'); setShowDatePicker(true); }}>
-                    <Text style={styles.pickerButtonText}>📅 {form.updDate || 'Select Date'}</Text>
-                  </TouchableOpacity>
-                  <TouchableOpacity style={styles.pickerButton} onPress={() => setShowTimePicker(true)}>
-                    <Text style={styles.pickerButtonText}>🕐 {form.updTime || 'Select Time'}</Text>
-                  </TouchableOpacity>
-                  <TextInput placeholder="Category" value={form.updCategory} onChangeText={(t) => setForm({...form, updCategory: t})} style={styles.input} />
-                  <TextInput placeholder="Description" value={form.updDescription} onChangeText={(t) => setForm({...form, updDescription: t})} style={[styles.input, styles.inputMultiline]} multiline numberOfLines={3} />
+                  <FormInput placeholder="Title" value={form.updTitle} onChangeText={(t) => setForm({...form, updTitle: t})} />
+                  <PickerButton label={form.updDate || 'Select Date'} onPress={() => { setActiveDateField('updDate'); setShowDatePicker(true); }} />
+                  <PickerButton label={form.updTime || 'Select Time'} onPress={() => setShowTimePicker(true)} />
+                  <FormInput placeholder="Category" value={form.updCategory} onChangeText={(t) => setForm({...form, updCategory: t})} />
+                  <FormInput placeholder="Description" value={form.updDescription} onChangeText={(t) => setForm({...form, updDescription: t})} style={{ minHeight: 80, textAlignVertical: 'top' }} multiline numberOfLines={3} />
                   <View style={styles.modalButtons}>
                     <TouchableOpacity style={styles.modalButton} onPress={() => {
                       const newItem = { id: Date.now().toString(), title: form.updTitle || 'Untitled', date: form.updDate || '', time: form.updTime || '', description: form.updDescription || '', category: form.updCategory || '' };
@@ -175,14 +172,12 @@ export const CombinedUrsScreen: React.FC<CombinedUrsProps> = ({ onNavigate }) =>
                 </>
               ) : (
                 <>
-                  <TextInput placeholder="Year" value={form.histYear} onChangeText={(t) => setForm({...form, histYear: t})} style={styles.input} />
-                  <TouchableOpacity style={styles.pickerButton} onPress={() => { setActiveDateField('histDate'); setShowDatePicker(true); }}>
-                    <Text style={styles.pickerButtonText}>📅 {form.histDate || 'Select Date'}</Text>
-                  </TouchableOpacity>
-                  <TextInput placeholder="Title" value={form.histTitle} onChangeText={(t) => setForm({...form, histTitle: t})} style={styles.input} />
-                  <TextInput placeholder="Summary" value={form.histSummary} onChangeText={(t) => setForm({...form, histSummary: t})} style={[styles.input, styles.inputMultiline]} multiline numberOfLines={3} />
-                  <TextInput placeholder="Highlights" value={form.histHighlights} onChangeText={(t) => setForm({...form, histHighlights: t})} style={styles.input} />
-                  <TextInput placeholder="Attendance" value={form.histAttendance} onChangeText={(t) => setForm({...form, histAttendance: t})} style={styles.input} />
+                  <FormInput placeholder="Year" value={form.histYear} onChangeText={(t) => setForm({...form, histYear: t})} />
+                  <PickerButton label={form.histDate || 'Select Date'} onPress={() => { setActiveDateField('histDate'); setShowDatePicker(true); }} />
+                  <FormInput placeholder="Title" value={form.histTitle} onChangeText={(t) => setForm({...form, histTitle: t})} />
+                  <FormInput placeholder="Summary" value={form.histSummary} onChangeText={(t) => setForm({...form, histSummary: t})} style={{ minHeight: 80, textAlignVertical: 'top' }} multiline numberOfLines={3} />
+                  <FormInput placeholder="Highlights" value={form.histHighlights} onChangeText={(t) => setForm({...form, histHighlights: t})} />
+                  <FormInput placeholder="Attendance" value={form.histAttendance} onChangeText={(t) => setForm({...form, histAttendance: t})} />
                   <View style={styles.modalButtons}>
                     <TouchableOpacity style={styles.modalButton} onPress={() => {
                       const newItem = { id: Date.now().toString(), year: form.histYear || '', date: form.histDate || '', title: form.histTitle || '', summary: form.histSummary || '', highlights: form.histHighlights || '', attendance: form.histAttendance || '' };

@@ -11,7 +11,6 @@ interface ServicesScreenProps {
 }
 
 export const ServicesScreen: React.FC<ServicesScreenProps> = ({ onNavigate }) => {
-  // merged view: show all services, but highlight available ones
   const displayServices = services;
 
   return (
